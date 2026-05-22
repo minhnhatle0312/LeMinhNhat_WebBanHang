@@ -1,0 +1,175 @@
+﻿/* Thiết lập Layout cơ bản chống tràn màn hình và xử lý Sticky Footer */
+html {
+    position: relative;
+    min-height: 100%;
+}
+
+body {
+    margin-bottom: 350px; /* Tạo khoảng trống bằng chiều cao footer */
+    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    color: #333;
+}
+
+/* ------------------- HEADER STYLE ------------------- */
+.custom-header {
+    position: sticky;
+    top: 0;
+    z-index: 1020;
+}
+
+.border-bottom-smooth {
+    box-shadow: 0 2px 15px rgba(0, 0, 0, 0.05);
+    border-bottom: 1px solid #f1f1f1 !important;
+}
+
+.brand-logo {
+    font-size: 1.35rem;
+    font-weight: 600;
+    letter-spacing: -0.5px;
+    color: #1a1a1a !important;
+}
+
+/* Các liên kết điều hướng trên Menu */
+.menu-links .nav-item {
+    margin: 0 6px;
+}
+
+.nav-link-custom {
+    color: #555 !important;
+    font-weight: 500;
+    padding: 8px 16px;
+    border-radius: 20px;
+    transition: all 0.25s ease-in-out;
+    display: inline-block;
+    text-decoration: none;
+}
+
+    .nav-link-custom:hover {
+        color: #0d6efd !important;
+        background-color: #f0f6ff;
+    }
+
+/* Ô nhập liệu tìm kiếm */
+.search-box input {
+    border: 1px solid #e0e0e0;
+    padding-left: 15px;
+    transition: all 0.3s ease;
+}
+
+    .search-box input:focus {
+        border-color: #0d6efd;
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+    }
+
+/* ------------------- MAIN CONTENT ------------------- */
+.content-wrapper {
+    min-height: 50vh;
+}
+
+/* Hiệu ứng mờ nhẹ xuất hiện nội dung trang */
+.animate-fade-in {
+    animation: fadeIn 0.4s ease-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(8px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* ------------------- FOOTER STYLE ------------------- */
+.custom-footer {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    height: auto;
+    background-color: #ffffff;
+    border-top: 1px solid #eaeaea;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.03);
+}
+
+.footer-brand {
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.footer-desc {
+    font-size: 0.92rem;
+    line-height: 1.6;
+}
+
+.footer-title {
+    font-weight: 600;
+    color: #1a1a1a;
+    position: relative;
+    padding-bottom: 10px;
+    margin-bottom: 15px;
+}
+
+    /* Thanh gạch chân trang trí tiêu đề footer */
+    .footer-title::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: 0;
+        width: 35px;
+        height: 2px;
+        background-color: #0d6efd;
+        border-radius: 2px;
+    }
+
+/* Các liên kết trong Footer */
+.footer-links li {
+    margin-bottom: 10px;
+}
+
+.footer-links a {
+    color: #6c757d;
+    text-decoration: none;
+    font-size: 0.92rem;
+    transition: color 0.2s ease;
+}
+
+    .footer-links a:hover {
+        color: #0d6efd;
+        padding-left: 4px;
+    }
+
+/* Danh sách thông tin liên hệ */
+.footer-contact li {
+    margin-bottom: 12px;
+    font-size: 0.92rem;
+    display: flex;
+    align-items: center;
+}
+
+/* Các nút mạng xã hội tròn */
+.social-link {
+    width: 36px;
+    height: 36px;
+    background-color: #f1f3f5;
+    color: #495057;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none;
+    transition: all 0.25s ease;
+}
+
+    .social-link:hover {
+        background-color: #0d6efd;
+        color: #ffffff;
+        transform: translateY(-3px);
+    }
+
+.bg-light-gray {
+    background-color: #f9f9f9;
+}
