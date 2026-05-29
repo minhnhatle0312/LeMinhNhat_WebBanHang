@@ -4,97 +4,95 @@
     ViewData["Title"] = "Chi Tiết Sản Phẩm - " + Model.Name;
 }
 
-<div class="container py-4">
-    <div class="mb-3 d-flex justify-content-between align-items-center">
-        <a asp-action="Index" class="btn btn-light border btn-sm rounded-pill text-muted px-3">
-            <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách
+<div class="container-fluid py-2">
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <a asp-action="Index" class="btn btn-white border btn-sm px-3 rounded-2 text-muted fw-medium shadow-xs">
+            <i class="bi bi-arrow-left me-1"></i> Trở về kho hàng
         </a>
-        <div>
-            <a asp-action="Update" asp-route-id="@Model.Id" class="btn btn-outline-info btn-sm rounded-pill px-3 me-2">
-                <i class="bi bi-pencil-square me-1"></i> Chỉnh sửa
+        <div class="d-flex gap-2">
+            <a asp-action="Update" asp-route-id="@Model.Id" class="btn btn-info btn-sm text-white px-3 rounded-2 fw-medium shadow-xs">
+                <i class="bi bi-pencil-square me-1"></i> Sửa thông tin
             </a>
         </div>
     </div>
 
-    <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
-        <div class="card-body p-4 p-lg-5 bg-white">
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden bg-white">
+        <div class="card-body p-4 p-lg-5">
             <div class="row g-5">
 
-                <div class="col-lg-5">
-                    <div class="main-image-container border rounded-3 p-3 bg-light text-center mb-3 d-flex align-items-center justify-content-center" style="min-height: 350px;">
+                <div class="col-12 col-lg-5">
+                    <div class="main-image-viewport border rounded-4 p-3 bg-light d-flex align-items-center justify-content-center mb-3 position-relative overflow-hidden" style="min-height: 400px;">
                         @if (!string.IsNullOrEmpty(Model.ImageUrl))
                         {
-                            <img id="current-main-img" src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid rounded transition-zoom" style="max-height: 320px; object-fit: contain;" />
+                            <img id="gallery-main-viewport" src="@Model.ImageUrl" alt="@Model.Name" class="img-fluid rounded-3 transition-zoom" style="max-height: 360px; object-fit: contain;" />
                         }
                         else
                         {
-                            <div class="text-muted text-center">
-                                <i class="bi bi-image d-block display-4 mb-2 text-black-50"></i>
-                                <span>Sản phẩm chưa có ảnh đại diện</span>
+                            <div class="text-center text-muted py-5">
+                                <i class="bi bi-image display-3 d-block mb-2 text-black-50"></i>
+                                <span class="font-12">Sản phẩm chưa có hình ảnh đại diện</span>
                             </div>
                         }
                     </div>
 
                     @if (Model.ImageUrls != null && Model.ImageUrls.Count > 0)
                     {
-                        <div class="sub-images-gallery mt-2">
-                            <h6 class="text-muted small fw-semibold mb-2"><i class="bi bi-images me-1"></i> Bộ sưu tập góc nhìn (@Model.ImageUrls.Count)</h6>
-                            <div class="d-flex flex-wrap gap-2">
-                                @if (!string.IsNullOrEmpty(Model.ImageUrl))
-                                {
-                                    <div class="thumb-img-wrapper border rounded active-thumb" onclick="changeMainImage('@Model.ImageUrl', this)" style="width: 70px; height: 70px; cursor: pointer; overflow: hidden; background: #fff;">
-                                        <img src="@Model.ImageUrl" class="w-100 h-100 p-1" style="object-fit: contain;" />
-                                    </div>
-                                }
-                                @foreach (var imgUrl in Model.ImageUrls)
-                                {
-                                    <div class="thumb-img-wrapper border rounded" onclick="changeMainImage('@imgUrl', this)" style="width: 70px; height: 70px; cursor: pointer; overflow: hidden; background: #fff;">
-                                        <img src="@imgUrl" class="w-100 h-100 p-1" style="object-fit: contain;" />
-                                    </div>
-                                }
+                        <div class="row g-2 justify-content-start">
+                            <div class="col-3 col-sm-2 col-lg-3">
+                                <div class="thumb-wrapper border rounded-3 p-1 bg-white active-thumb" onclick="switchGalleryImage('@Model.ImageUrl', this)" style="cursor: pointer; height: 75px;">
+                                    <img src="@Model.ImageUrl" class="w-100 h-100 object-fit-contain rounded-2" />
+                                </div>
                             </div>
+                            @foreach (var subUrl in Model.ImageUrls)
+                            {
+                                <div class="col-3 col-sm-2 col-lg-3">
+                                    <div class="thumb-wrapper border rounded-3 p-1 bg-white" onclick="switchGalleryImage('@subUrl', this)" style="cursor: pointer; height: 75px;">
+                                        <img src="@subUrl" class="w-100 h-100 object-fit-contain rounded-2" />
+                                    </div>
+                                </div>
+                            }
                         </div>
                     }
                 </div>
 
-                <div class="col-lg-7 d-flex flex-column justify-content-between">
+                <div class="col-12 col-lg-7 d-flex flex-column justify-content-between">
                     <div>
-                        <div class="d-flex align-items-center gap-2 mb-2">
-                            <span class="badge bg-light text-secondary border px-2 py-1 small fw-normal">ID: #@Model.Id</span>
-                            <span class="badge bg-primary-soft text-primary px-2 py-1 fw-semibold">
-                                <i class="bi bi-grid-1x2 me-1"></i> Danh mục ID: @Model.CategoryId
-                            </span>
+                        <div class="d-flex align-items-center flex-wrap gap-2 mb-3">
+                            <span class="badge bg-primary px-3 py-2 rounded-2 fw-semibold" style="font-size: 11px; letter-spacing: 0.5px;">MÃ MẶT HÀNG: #@Model.Id</span>
+                            <span class="badge bg-light text-dark border px-2.5 py-2 rounded-2 fw-medium font-11"><i class="bi bi-tag-fill text-primary me-1"></i> Danh mục ID: @Model.CategoryId</span>
                         </div>
 
-                        <h2 class="text-dark fw-bold mb-3">@Model.Name</h2>
+                        <h2 class="fw-bold text-dark mb-3 lh-sm text-gradient-title">@Model.Name</h2>
 
-                        <div class="price-box bg-light p-3 rounded-3 mb-4 d-inline-block border-start border-primary border-4">
-                            <span class="text-muted small d-block mb-1">Giá niêm yết công khai</span>
-                            <span class="text-primary fs-3 fw-bold">@Model.Price.ToString("N2") $</span>
+                        <div class="p-3 bg-light rounded-3 d-flex align-items-baseline mb-4 shadow-inner" style="background: linear-gradient(145deg, #f8fafc, #f1f5f9);">
+                            <span class="text-muted small me-3 fw-medium">Giá Niêm Yết Kho:</span>
+                            <span class="fs-2 fw-bold text-danger">@Model.Price.ToString("N2") <span class="fs-5 fw-normal">$</span></span>
                         </div>
 
-                        <div class="description-block mb-4">
-                            <h5 class="text-dark fw-semibold mb-2 border-bottom pb-2">
-                                <i class="bi bi-file-earmark-text me-1"></i> Thông số & Mô tả cấu hình
-                            </h5>
-                            @if (!string.IsNullOrEmpty(Model.Description))
-                            {
-                                <p class="text-secondary lh-lg mb-0 text-justify" style="white-space: pre-line;">@Model.Description</p>
-                            }
-                            else
-                            {
-                                <p class="text-muted fst-italic mb-0">Sản phẩm này hiện chưa được cập nhật thông số kỹ thuật chi tiết từ nhà sản xuất.</p>
-                            }
+                        <div class="mb-4">
+                            <h5 class="fw-bold text-dark border-start border-3 border-primary ps-2 mb-3 font-14">Thông số mô tả thiết bị</h5>
+                            <div class="p-4 border rounded-3 text-muted lh-lg shadow-xs" style="white-space: pre-line; background-color: #fafafa; font-size: 14px;">
+                                @if (!string.IsNullOrEmpty(Model.Description))
+                                {
+                                    @Model.Description
+                                }
+                                else
+                                {
+                                    <span class="fst-italic text-black-30">Sản phẩm này chưa được điền thông số kỹ thuật mô tả chi tiết từ quản trị viên.</span>
+                                }
+                            </div>
                         </div>
                     </div>
 
-                    <div class="action-footer pt-3 border-top mt-4 d-flex gap-2">
-                        <button class="btn btn-primary px-4 py-2 rounded-pill shadow-sm flex-grow-1 flex-md-grow-0">
-                            <i class="bi bi-cart-plus me-2"></i> Thêm vào giỏ hàng
-                        </button>
-                        <a asp-action="Update" asp-route-id="@Model.Id" class="btn btn-light border px-4 py-2 rounded-pill">
-                            <i class="bi bi-gear me-1"></i> Quản trị tệp
-                        </a>
+                    <div class="p-3 border rounded-3 bg-light-soft d-flex align-items-center justify-content-between mt-4">
+                        <div class="d-flex align-items-center gap-2 small text-muted">
+                            <i class="bi bi-shield-check-fill text-success fs-3"></i>
+                            <div>
+                                <span class="d-block fw-bold text-dark font-12">Dữ liệu an toàn</span>
+                                <span class="font-11">Bản ghi đã đồng bộ trực tiếp lên Database.</span>
+                            </div>
+                        </div>
+                        <span class="badge bg-success-subtle text-success border border-success-subtle px-2.5 py-1.5 rounded-2 font-11 fw-semibold">Trạng thái: Sẵn sàng</span>
                     </div>
 
                 </div>
@@ -103,45 +101,89 @@
     </div>
 </div>
 
+<style>
+    /* Bổ sung các biến CSS tiện ích & Animation mịn */
+    .shadow-xs {
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+
+    .shadow-inner {
+        box-shadow: inset 0 2px 4px 0 rgba(0,0,0,0.02);
+    }
+
+    .bg-light-soft {
+        background-color: #f8fafc;
+        border: 1px solid #e2e8f0;
+    }
+
+    .btn-white {
+        background: #fff;
+    }
+
+    /* Album Thumbnail style */
+    .thumb-wrapper {
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        border: 1px solid #e2e8f0 !important;
+    }
+
+        .thumb-wrapper:hover {
+            border-color: #cbd5e1 !important;
+            transform: translateY(-2px);
+        }
+
+    .active-thumb {
+        border-color: #0ea5e9 !important;
+        border-width: 2px !important;
+        box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.15);
+    }
+
+    .object-fit-contain {
+        object-fit: contain;
+    }
+
+    /* Hiệu ứng phóng to ảnh mượt mà */
+    .transition-zoom {
+        transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .main-image-viewport:hover .transition-zoom {
+        transform: scale(1.04);
+    }
+
+    .font-11 {
+        font-size: 11px;
+    }
+
+    .font-12 {
+        font-size: 12px;
+    }
+
+    .font-14 {
+        font-size: 14px;
+    }
+</style>
+
 @section Scripts {
     <script>
-        function changeMainImage(src, element) {
-            // Thay đổi thuộc tính đường dẫn của ảnh chính
-            document.getElementById('current-main-img').src = src;
+        // Xử lý chuyển đổi ảnh mượt mà
+        function switchGalleryImage(imagePath, clickedElement) {
+            const mainViewport = document.getElementById('gallery-main-viewport');
 
-            // Xóa class active ở tất cả các khung ảnh thu nhỏ
-            var thumbs = document.querySelectorAll('.thumb-img-wrapper');
-            thumbs.forEach(function (thumb) {
-                thumb.classList.remove('border-primary', 'active-thumb');
-                thumb.style.borderColor = '#dee2e6';
+            // Thêm hiệu ứng mờ nhẹ khi đổi ảnh để tạo cảm giác tự nhiên
+            mainViewport.style.opacity = '0.3';
+
+            setTimeout(() => {
+                mainViewport.src = imagePath;
+                mainViewport.style.opacity = '1';
+            }, 120);
+
+            // Làm sạch class active cũ
+            document.querySelectorAll('.thumb-wrapper').forEach(function (el) {
+                el.classList.remove('active-thumb');
             });
 
-            // Thêm hiệu ứng viền xanh cho ảnh đang được click chọn
-            element.classList.add('border-primary', 'active-thumb');
-            element.style.borderColor = '#0d6efd';
+            // Kích hoạt viền xanh cho thẻ vừa chọn
+            clickedElement.classList.add('active-thumb');
         }
     </script>
-
-    <style>
-        .bg-primary-soft {
-            background-color: #f0f6ff;
-        }
-
-        .active-thumb {
-            border-width: 2px !important;
-            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.15);
-        }
-
-        .transition-zoom {
-            transition: transform 0.3s ease;
-        }
-
-        .main-image-container:hover .transition-zoom {
-            transform: scale(1.03);
-        }
-
-        .text-justify {
-            text-align: justify;
-        }
-    </style>
 }

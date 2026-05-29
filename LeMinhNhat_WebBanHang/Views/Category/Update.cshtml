@@ -1,31 +1,73 @@
 ﻿@model LeMinhNhat_WebBanHang.Models.Category
 
 @{
-    ViewData["Title"] = "Cập nhật danh mục";
+    ViewData["Title"] = "Cập Nhật Danh Mục";
 }
 
-<h1>Cập nhật danh mục</h1>
-<h4>Category</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Update">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
-            <input type="hidden" asp-for="Id" />
+<div class="container-fluid py-4 px-4" style="background-color: #f8f9fa;">
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <div>
+            <h3 class="text-dark fw-bold mb-1 d-flex align-items-center">
+                <i class="bi bi-pencil-square text-info me-2 fs-4"></i> Điều Chỉnh Danh Mục
+            </h3>
+            <p class="text-muted small mb-0">Cập nhật lại tên hiển thị chuẩn xác cho mã danh mục #@Model.Id.</p>
+        </div>
+        <a asp-action="Index" class="btn btn-white border btn-sm px-3 rounded-2 text-muted fw-medium bg-white shadow-xs">
+            <i class="bi bi-arrow-left me-1"></i> Trở về danh sách
+        </a>
+    </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="Name" class="control-label">Tên danh mục mới</label>
-                <input asp-for="Name" class="form-control" />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
+    <div class="row">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden bg-white">
+                <div class="card-body p-4 p-lg-5">
+                    <form asp-action="Update" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
 
-            <div class="form-group">
-                <input type="submit" value="Lưu thay đổi" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+                        <input type="hidden" asp-for="Id" />
+
+                        <div class="d-flex align-items-center justify-content-between mb-4 p-3 bg-light rounded-3">
+                            <span class="text-muted small fw-medium">Mã phân loại định danh:</span>
+                            <span class="badge bg-secondary px-3 py-1.5 rounded-2 fw-bold">ID TÀI SẢN: #@Model.Id</span>
+                        </div>
+
+                        <div class="mb-4">
+                            <label asp-for="Name" class="form-label fw-semibold text-secondary small">Tên danh mục mới</label>
+                            <div class="input-group border rounded-3 bg-light">
+                                <span class="input-group-text bg-transparent border-0 text-muted"><i class="bi bi-folder2-open"></i></span>
+                                <input asp-for="Name" class="form-control border-0 bg-transparent py-2.5 shadow-none text-dark fw-semibold font-14" />
+                            </div>
+                            <span asp-validation-for="Name" class="text-danger small d-block mt-1"></span>
+                        </div>
+
+                        <div class="pt-3 border-top d-flex justify-content-end gap-2">
+                            <a asp-action="Index" class="btn btn-light border px-4 py-2.5 rounded-2 font-13 text-muted fw-medium">
+                                Hủy chỉnh sửa
+                            </a>
+                            <button type="submit" class="btn btn-info text-white px-4 py-2.5 rounded-2 font-13 fw-semibold shadow-sm">
+                                <i class="bi bi-arrow-repeat me-1"></i> Áp dụng thay đổi
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </form>
+        </div>
     </div>
 </div>
+
+<style>
+    .font-13 {
+        font-size: 13px;
+    }
+
+    .font-14 {
+        font-size: 14px;
+    }
+
+    .shadow-xs {
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+</style>
 
 @section Scripts {
     @{

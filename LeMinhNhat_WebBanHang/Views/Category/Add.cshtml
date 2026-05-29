@@ -1,30 +1,72 @@
 ﻿@model LeMinhNhat_WebBanHang.Models.Category
 
 @{
-    ViewData["Title"] = "Thêm danh mục";
+    ViewData["Title"] = "Thêm Danh Mục Mới";
 }
 
-<h1>Thêm danh mục</h1>
-<h4>Category</h4>
-<hr />
-<div class="row">
-    <div class="col-md-4">
-        <form asp-action="Add">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+<div class="container-fluid py-4 px-4" style="background-color: #f8f9fa;">
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <div>
+            <h3 class="text-dark fw-bold mb-1 d-flex align-items-center">
+                <i class="bi bi-folder-plus text-primary me-2 fs-4"></i> Khởi Tạo Danh Mục
+            </h3>
+            <p class="text-muted small mb-0">Thêm nhóm phân loại mới cho các dòng thiết bị công nghệ hiện có.</p>
+        </div>
+        <a asp-action="Index" class="btn btn-white border btn-sm px-3 rounded-2 text-muted fw-medium bg-white shadow-xs">
+            <i class="bi bi-arrow-left me-1"></i> Trở về danh sách
+        </a>
+    </div>
 
-            <div class="form-group mb-3">
-                <label asp-for="Name" class="control-label">Tên danh mục</label>
-                <input asp-for="Name" class="form-control" placeholder="Nhập tên danh mục..." />
-                <span asp-validation-for="Name" class="text-danger"></span>
-            </div>
+    <div class="row">
+        <div class="col-12 col-md-8 col-lg-6">
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden bg-white">
+                <div class="card-body p-4 p-lg-5">
+                    <form asp-action="Add" method="post">
+                        <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
 
-            <div class="form-group">
-                <input type="submit" value="Tạo mới" class="btn btn-primary" />
-                <a asp-action="Index" class="btn btn-secondary">Quay lại danh sách</a>
+                        <h5 class="fw-bold text-dark border-start border-3 border-primary ps-2 mb-4 font-15">Thông tin danh mục</h5>
+
+                        <div class="mb-4">
+                            <label asp-for="Name" class="form-label fw-semibold text-secondary small">Tên danh mục ngành hàng <span class="text-danger">*</span></label>
+                            <div class="input-group border rounded-3 bg-light">
+                                <span class="input-group-text bg-transparent border-0 text-muted"><i class="bi bi-folder-fill"></i></span>
+                                <input asp-for="Name" class="form-control border-0 bg-transparent py-2.5 shadow-none text-dark fw-medium font-14" placeholder="Nhập tên nhóm (Ví dụ: Linh kiện PC, SmartPhone...)" />
+                            </div>
+                            <span asp-validation-for="Name" class="text-danger small d-block mt-1"></span>
+                        </div>
+
+                        <div class="pt-3 border-top d-flex justify-content-end gap-2">
+                            <a asp-action="Index" class="btn btn-light border px-4 py-2.5 rounded-2 font-13 fw-medium text-muted">
+                                Hủy bỏ
+                            </a>
+                            <button type="submit" class="btn btn-primary px-4 py-2.5 rounded-2 font-13 fw-semibold shadow-sm">
+                                <i class="bi bi-check-circle-fill me-1"></i> Lưu và tạo mới
+                            </button>
+                        </div>
+                    </form>
+                </div>
             </div>
-        </form>
+        </div>
     </div>
 </div>
+
+<style>
+    .font-13 {
+        font-size: 13px;
+    }
+
+    .font-14 {
+        font-size: 14px;
+    }
+
+    .font-15 {
+        font-size: 15px;
+    }
+
+    .shadow-xs {
+        box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+    }
+</style>
 
 @section Scripts {
     @{

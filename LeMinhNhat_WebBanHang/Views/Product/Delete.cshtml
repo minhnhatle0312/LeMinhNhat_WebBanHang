@@ -1,50 +1,79 @@
 ﻿@model LeMinhNhat_WebBanHang.Models.Product
 
 @{
-    ViewData["Title"] = "Delete";
+    ViewData["Title"] = "Xác Nhận Xóa Mặt Hàng";
 }
 
-<h1>Delete</h1>
+<div class="container-fluid py-2">
+    <div class="mb-4">
+        <h3 class="text-dark fw-bold mb-1 d-flex align-items-center">
+            <i class="bi bi-exclamation-triangle-fill text-danger me-2 fs-4"></i> Gỡ Bỏ Bản Ghi Khỏi Hệ Thống
+        </h3>
+        <p class="text-muted small mb-0">Hành động này mang tính vĩnh viễn và không thể khôi phục lại dữ liệu.</p>
+    </div>
 
-<h3>Are you sure you want to delete this?</h3>
-<div>
-    <h4>Product</h4>
-    <hr />
-    <dl class="row">
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Id)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Id)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Name)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Name)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Price)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Price)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.Description)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.Description)
-        </dd>
-        <dt class = "col-sm-2">
-            @Html.DisplayNameFor(model => model.CategoryId)
-        </dt>
-        <dd class = "col-sm-10">
-            @Html.DisplayFor(model => model.CategoryId)
-        </dd>
-    </dl>
-    
-    <form asp-action="Delete">
-        <input type="submit" value="Delete" class="btn btn-danger" /> |
-        <a asp-action="Index">Back to List</a>
-    </form>
+    <div class="row justify-content-start">
+        <div class="col-12 col-xl-8">
+
+            <div class="alert alert-danger border-0 shadow-sm rounded-4 p-4 mb-4 bg-danger bg-opacity-10 d-flex gap-3 align-items-start">
+                <i class="bi bi-shield-fill-exclamation text-danger display-6 style-lh-1"></i>
+                <div>
+                    <h5 class="fw-bold text-danger mb-1">Cảnh báo loại bỏ dữ liệu!</h5>
+                    <p class="text-secondary small mb-0">
+                        Khi nhấn nút <strong class="text-danger">"Xác nhận xóa vĩnh viễn"</strong>, toàn bộ thông tin mô tả chi tiết, giá tiền bán ra cùng tệp ảnh phụ thuộc mã sản phẩm <span class="fw-bold">#@Model.Id</span> sẽ biến mất hoàn toàn khỏi Database.
+                    </p>
+                </div>
+            </div>
+
+            <div class="card shadow-sm border-0 rounded-4 overflow-hidden bg-white mb-4">
+                <div class="card-body p-4">
+                    <div class="d-flex flex-column flex-sm-row align-items-center align-items-sm-start gap-4">
+                        <div class="bg-light border rounded-3 p-2 d-flex align-items-center justify-content-center" style="width: 130px; height: 130px; flex-shrink: 0;">
+                            @if (!string.IsNullOrEmpty(Model.ImageUrl))
+                            {
+                                <img src="@Model.ImageUrl" class="w-100 h-100 object-fit-contain rounded-2" />
+                            }
+                            else
+                            {
+                                <i class="bi bi-image text-muted display-6"></i>
+                            }
+                        </div>
+                        <div class="w-100 text-center text-sm-start">
+                            <span class="badge bg-secondary mb-2 rounded-2 px-2.5 py-1" style="font-size: 10px;">MÃ SẢN PHẨM: #@Model.Id</span>
+                            <h4 class="fw-bold text-dark mb-1">@Model.Name</h4>
+                            <p class="text-danger fw-bold fs-5 mb-2">@Model.Price.ToString("N2") $</p>
+                            <p class="text-muted small mb-0 text-truncate-3">@Model.Description</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form asp-action="DeleteConfirmed" method="post">
+                <input type="hidden" asp-for="Id" />
+
+                <div class="d-flex gap-2 justify-content-end">
+                    <a asp-action="Index" class="btn btn-light border px-4 py-2.5 rounded-2 font-12 fw-medium text-muted">
+                        Giữ lại sản phẩm
+                    </a>
+                    <button type="submit" class="btn btn-danger px-4 py-2.5 rounded-2 font-12 fw-semibold shadow-sm">
+                        <i class="bi bi-trash3-fill me-1"></i> Xác nhận xóa vĩnh viễn
+                    </button>
+                </div>
+            </form>
+
+        </div>
+    </div>
 </div>
+
+<style>
+    .style-lh-1 {
+        line-height: 1;
+    }
+
+    .text-truncate-3 {
+        display: -webkit-box;
+        -webkit-line-clamp: 3;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+</style>

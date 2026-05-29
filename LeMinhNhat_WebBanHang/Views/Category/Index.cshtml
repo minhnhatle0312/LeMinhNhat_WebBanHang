@@ -1,41 +1,197 @@
 ﻿@model IEnumerable<LeMinhNhat_WebBanHang.Models.Category>
 
 @{
-    ViewData["Title"] = "Danh mục sản phẩm";
+    ViewData["Title"] = "Quản Lý Danh Mục Ngành Hàng";
 }
 
-<h1>Danh sách danh mục</h1>
+<div class="container-fluid py-4 px-4" style="background-color: #f8f9fa;">
 
-<p>
-    <a asp-action="Add" class="btn btn-success">Thêm danh mục mới</a>
-</p>
-<table class="table table-bordered table-striped">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Id)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Name)
-            </th>
-            <th style="width: 200px;">Hành động</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var item in Model)
-        {
-            <tr>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Id)
-                </td>
-                <td>
-                    @Html.DisplayFor(modelItem => item.Name)
-                </td>
-                <td>
-                    <a asp-action="Update" asp-route-id="@item.Id" class="btn btn-sm btn-info">Sửa</a> |
-                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-danger">Xóa</a>
-                </td>
-            </tr>
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
+        <div>
+            <h2 class="text-dark fw-bold mb-1 d-flex align-items-center">
+                <i class="bi bi-tags-fill text-primary me-2 fs-3"></i> Danh Mục Ngành Hàng
+            </h2>
+            <p class="text-muted mb-0">Cấu hình phân loại nhóm thiết bị, phân chia luồng dữ liệu sản phẩm trong kho.</p>
+        </div>
+        <div>
+            <a asp-action="Add" class="btn btn-primary px-4 py-2.5 rounded-3 shadow-sm fw-semibold font-13 transition-all">
+                <i class="bi bi-plus-lg me-2"></i> Tạo danh mục mới
+            </a>
+        </div>
+    </div>
+
+    <div class="row g-3 mb-4">
+        <div class="col-12 col-sm-6 col-md-4">
+            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white h-100">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small d-block fw-medium mb-1">Tổng số danh mục</span>
+                        <h3 class="fw-bold text-dark mb-0">@Model.Count()</h3>
+                    </div>
+                    <div class="bg-primary bg-opacity-10 text-primary rounded-3 p-2.5 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                        <i class="bi bi-folder-fill fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="col-12 col-sm-6 col-md-4">
+            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white h-100">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div>
+                        <span class="text-muted small d-block fw-medium mb-1">Trạng thái hệ thống</span>
+                        <h6 class="fw-bold text-success mb-0 d-flex align-items-center mt-1">
+                            <span class="pulse-indicator me-2"></span> Đang hoạt động
+                        </h6>
+                    </div>
+                    <div class="bg-success bg-opacity-10 text-success rounded-3 p-2.5 d-flex align-items-center justify-content-center" style="width: 45px; height: 45px;">
+                        <i class="bi bi-cpu-fill fs-4"></i>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+        <div class="table-responsive">
+            <table class="table table-hover align-middle mb-0 custom-dashboard-table">
+                <thead class="table-light-gray border-bottom">
+                    <tr>
+                        <th class="ps-4 text-secondary py-3 fw-bold font-12" style="width: 120px;">MÃ ID</th>
+                        <th class="text-secondary py-3 fw-bold font-12">TÊN DANH MỤC NGÀNH HÀNG</th>
+                        <th class="pe-4 text-secondary py-3 fw-bold font-12 text-end" style="width: 220px;">THAO TÁC</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (Model != null && Model.Any())
+                    {
+                        foreach (var item in Model)
+                        {
+                            <tr>
+                                <td class="ps-4">
+                                    <span class="badge bg-light text-dark border px-2.5 py-1.5 rounded-2 font-12 fw-semibold">
+                                        #@item.Id
+                                    </span>
+                                </td>
+                                <td>
+                                    <div class="d-flex align-items-center gap-2">
+                                        <div class="folder-icon-box bg-light rounded-2 text-primary d-flex align-items-center justify-content-center" style="width: 32px; height: 32px;">
+                                            <i class="bi bi-folder2-open"></i>
+                                        </div>
+                                        <span class="fw-semibold text-dark font-14">@item.Name</span>
+                                    </div>
+                                </td>
+                                <td class="pe-4 text-end">
+                                    <div class="d-inline-flex gap-1">
+                                        <a asp-action="Update" asp-route-id="@item.Id" class="btn btn-icon-action btn-outline-info" title="Sửa thông tin">
+                                            <i class="bi bi-pencil-square"></i>
+                                        </a>
+                                        <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-icon-action btn-outline-danger" title="Xóa danh mục">
+                                            <i class="bi bi-trash3"></i>
+                                        </a>
+                                    </div>
+                                </td>
+                            </tr>
+                        }
+                    }
+                    else
+                    {
+                        <tr>
+                            <td colspan="3" class="text-center py-5 text-muted">
+                                <i class="bi bi-inbox display-4 d-block mb-2 text-black-30"></i>
+                                <span class="font-13">Không có dữ liệu danh mục nào được tìm thấy.</span>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<style>
+    .table-light-gray {
+        background-color: #f8fafc;
+    }
+
+    .font-12 {
+        font-size: 12px;
+    }
+
+    .font-13 {
+        font-size: 13px;
+    }
+
+    .font-14 {
+        font-size: 14px;
+    }
+
+    .text-black-30 {
+        color: #cbd5e1;
+    }
+
+    /* Hiệu ứng mượt cho hàng của bảng */
+    .custom-dashboard-table tbody tr {
+        transition: background-color 0.15s ease;
+    }
+
+        .custom-dashboard-table tbody tr:hover {
+            background-color: #f8fafc;
         }
-    </tbody>
-</table>
+
+    /* Nút icon thao tác tinh tế */
+    .btn-icon-action {
+        width: 34px;
+        height: 34px;
+        padding: 0;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 8px;
+        font-size: 14px;
+        transition: all 0.2s ease;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+    }
+
+        .btn-icon-action.btn-outline-info:hover {
+            background-color: #0dcaf0;
+            border-color: #0dcaf0;
+            color: #fff !important;
+            transform: translateY(-2px);
+        }
+
+        .btn-icon-action.btn-outline-danger:hover {
+            background-color: #dc3545;
+            border-color: #dc3545;
+            color: #fff !important;
+            transform: translateY(-2px);
+        }
+
+    /* Hiệu ứng nhấp nháy cho trạng thái */
+    .pulse-indicator {
+        width: 8px;
+        height: 8px;
+        background-color: #198754;
+        border-radius: 50%;
+        display: inline-block;
+        box-shadow: 0 0 0 0 rgba(25, 135, 84, 0.7);
+        animation: pulse 2s infinite;
+    }
+
+    @@keyframes pulse {
+        0% {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(25, 135, 84, 0.7);
+        }
+
+        70% {
+            transform: scale(1);
+            box-shadow: 0 0 0 6px rgba(25, 135, 84, 0);
+        }
+
+        100% {
+            transform: scale(0.95);
+            box-shadow: 0 0 0 0 rgba(25, 135, 84, 0);
+        }
+    }
+</style>

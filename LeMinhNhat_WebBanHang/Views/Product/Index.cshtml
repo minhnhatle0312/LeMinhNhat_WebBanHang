@@ -1,275 +1,694 @@
 ﻿@model IEnumerable<LeMinhNhat_WebBanHang.Models.Product>
 
 @{
-    ViewData["Title"] = "Bảng Điều Khiển Quản Lý Sản Phẩm";
+    ViewData["Title"] = "Thế Giới Công Nghệ & Điện Máy Chính Hãng";
 }
 
-<div class="container-fluid py-4 px-4" style="background-color: #f8f9fa;">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
 
-    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 gap-3">
-        <div>
-            <h2 class="text-dark fw-bold mb-1 d-flex align-items-center">
-                <i class="bi bi-grid-3x3-gap-fill text-primary me-2 fs-3"></i> Hệ Thống Quản Lý Sản Phẩm
-            </h2>
-            <p class="text-muted mb-0">Hệ thống phân tích, cập nhật thông tin và điều chỉnh giá hàng hóa real-time.</p>
-        </div>
-        <div>
-            <a asp-action="Add" class="btn btn-primary px-4 py-2 rounded-pill shadow-sm fw-semibold transition-all">
-                <i class="bi bi-plus-circle-fill me-2"></i> Thêm sản phẩm mới
+<div class="dmx-mega-wrapper py-4" style="background-color: #f0f2f5; font-family: system-ui, -apple-system, sans-serif;">
+    <div class="container-fluid px-lg-5">
+
+        <div class="d-flex justify-content-between align-items-center mb-4 bg-white p-3 rounded-4 shadow-sm border-start border-4 border-dmx">
+            <div>
+                <span class="badge bg-danger text-white fw-bold px-2.5 py-1 mb-1 animate__animated animate__flash animate__infinite animate__slower font-10">LIVE CONSOLE</span>
+                <h5 class="text-dark fw-black mb-0 d-flex align-items-center font-16">
+                    <i class="bi bi-cpu-fill text-dmx me-2 animate__animated animate__pulse animate__infinite"></i> CƠ SỞ DỮ LIỆU KHO HÀNG ĐIỆN MÁY
+                </h5>
+            </div>
+            <a asp-action="Add" class="btn btn-dmx-gradient px-4 py-2.5 rounded-3 fw-bold shadow-sm font-13 position-relative overflow-hidden btn-shine">
+                <i class="bi bi-plus-circle-fill me-2"></i> ĐĂNG KÝ SẢN PHẨM MỚI
             </a>
         </div>
-    </div>
 
-    <div class="row g-3 mb-4">
-        <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white h-100">
-                <div class="d-flex align-items-center justify-content-between">
-                    <div>
-                        <span class="text-muted small fw-semibold d-block mb-1">TỔNG SẢN PHẨM</span>
-                        <h3 class="fw-bold text-dark mb-0">@Model.Count()</h3>
+        <div class="row g-3 mb-4">
+            <div class="col-12 col-xl-8">
+                <div id="dmxPremiumCarousel" class="carousel slide carousel-fade shadow-sm rounded-4 overflow-hidden h-100" data-bs-ride="carousel">
+                    <div class="carousel-indicators mb-3">
+                        <button type="button" data-bs-target="#dmxPremiumCarousel" data-bs-slide-to="0" class="active rounded-circle" style="width: 10px; height: 10px;"></button>
+                        <button type="button" data-bs-target="#dmxPremiumCarousel" data-bs-slide-to="1" class="rounded-circle" style="width: 10px; height: 10px;"></button>
+                        <button type="button" data-bs-target="#dmxPremiumCarousel" data-bs-slide-to="2" class="rounded-circle" style="width: 10px; height: 10px;"></button>
                     </div>
-                    <div class="bg-primary-soft p-3 rounded-3 text-primary">
-                        <i class="bi bi-box-seam fs-4 d-block"></i>
+
+                    <div class="carousel-inner h-100">
+                        <div class="carousel-item active h-100" data-bs-interval="4000">
+                            <div class="mega-banner-slide p-5 text-white d-flex flex-column justify-content-center position-relative h-100" style="background: linear-gradient(135deg, #005691 0%, #00a8ff 100%); min-height: 380px;">
+                                <div class="banner-overlay-particles"></div>
+                                <div class="position-relative z-3 col-10 col-md-7 animate__animated animate__fadeInLeft">
+                                    <span class="badge bg-warning text-dark rounded-pill px-3 py-1.5 fw-bold mb-3 font-11 shadow">SIÊU PHẨM GIÁ SỐC</span>
+                                    <h1 class="fw-black display-5 mb-2 style-tracking-tight">SMARTPHONE CAO CẤP <br><span class="text-warning">GIẢM 5 TRỆU ĐỒNG</span></h1>
+                                    <p class="mb-4 opacity-90 font-14">Hỗ trợ đặc quyền thu cũ đổi mới - Tặng thêm bộ sạc siêu tốc 45W chính hãng.</p>
+                                    <a href="#product-showcase" class="btn btn-light text-dmx fw-bold px-4 py-2.5 rounded-pill shadow action-pulse">Săn Ngay Deal Hot</a>
+                                </div>
+                                <div class="slide-floating-asset d-none d-md-block position-absolute end-0 bottom-0 mb-4 me-5 animate__animated animate__fadeInRight">
+                                    <i class="bi bi-phone text-white opacity-20" style="font-size: 16rem; line-height: 1;"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="carousel-item h-100" data-bs-interval="4000">
+                            <div class="mega-banner-slide p-5 text-white d-flex flex-column justify-content-center position-relative h-100" style="background: linear-gradient(135deg, #d63031 0%, #e84393 100%); min-height: 380px;">
+                                <div class="position-relative z-3 col-10 col-md-7 animate__animated animate__fadeInDown">
+                                    <span class="badge bg-white text-danger rounded-pill px-3 py-1.5 fw-bold mb-3 font-11 shadow">MÙA TỰU TRƯỜNG</span>
+                                    <h1 class="fw-black display-5 mb-2 style-tracking-tight">LAPTOP ĐỒ HỌA/GAMING <br><span class="text-light">TẶNG PHIẾU 2.000.000đ</span></h1>
+                                    <p class="mb-4 opacity-90 font-14">Giảm thêm 5% cho sinh viên HUTECH. Tặng kèm chuột không dây và Balo sành điệu.</p>
+                                    <a href="#product-showcase" class="btn btn-warning text-dark fw-bold px-4 py-2.5 rounded-pill shadow">Xem Ngay Danh Sách</a>
+                                </div>
+                                <div class="slide-floating-asset d-none d-md-block position-absolute end-0 bottom-0 mb-4 me-5">
+                                    <i class="bi bi-laptop text-white opacity-10" style="font-size: 16rem; line-height: 1;"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="carousel-item h-100" data-bs-interval="4000">
+                            <div class="mega-banner-slide p-5 text-white d-flex flex-column justify-content-center position-relative h-100" style="background: linear-gradient(135deg, #00b894 0%, #00cec9 100%); min-height: 380px;">
+                                <div class="position-relative z-3 col-10 col-md-7 animate__animated animate__zoomIn">
+                                    <span class="badge bg-dark text-warning rounded-pill px-3 py-1.5 fw-bold mb-3 font-11 shadow">GIÁ RẺ QUÁ</span>
+                                    <h1 class="fw-black display-5 mb-2 style-tracking-tight">PHỤ KIỆN ĐỒNG GIÁ <br><span class="text-warning">CHỈ TỪ 99.000đ</span></h1>
+                                    <p class="mb-4 opacity-90 font-14">Tai nghe Bluetooth, Pin sạc dự phòng, Cáp sạc nhanh mua 1 tặng 1 cực sốc.</p>
+                                    <a href="#product-showcase" class="btn btn-dark text-white fw-bold px-4 py-2.5 rounded-pill shadow">Khám Phá Ưu Đãi</a>
+                                </div>
+                                <div class="slide-floating-asset d-none d-md-block position-absolute end-0 bottom-0 mb-4 me-5">
+                                    <i class="bi bi-earbuds text-white opacity-10" style="font-size: 16rem; line-height: 1;"></i>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
-        </div>
-        <div class="col-12 col-sm-6 col-xl-3">
-            <div class="card border-0 shadow-sm rounded-3 p-3 bg-white h-100">
-                <div class="d-flex align-items-center justify-content-between">
-                    <div>
-                        <span class="text-muted small fw-semibold d-block mb-1">GIÁ CAO NHẤT</span>
-                        <h3 class="fw-bold text-success mb-0">
-                            @(Model.Any() ? Model.Max(p => p.Price).ToString("N0") : "0") <span class="fs-6 fw-normal">đ</span>
-                        </h3>
-                    </div>
-                    <div class="bg-success-soft p-3 rounded-3 text-success">
-                        <i class="bi bi-graph-up-arrow fs-4 d-block"></i>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <div class="card border-0 shadow-sm rounded-3 overflow-hidden bg-white">
-
-        <div class="card-header bg-white py-3 border-bottom border-light">
-            <div class="row g-3 align-items-center">
-                <div class="col-12 col-md-4">
-                    <div class="input-group">
-                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-search"></i></span>
-                        <input type="text" id="tableSearchInput" class="form-control border-start-0 bg-light-focus" placeholder="Tìm kiếm nhanh sản phẩm..." />
+            <div class="col-12 col-xl-4 d-flex flex-column gap-3">
+                <div class="sub-banner-box rounded-4 overflow-hidden position-relative flex-grow-1 p-4 text-white d-flex align-items-center" style="background: linear-gradient(45deg, #fe8c00, #f857a6); min-height: 182px;">
+                    <div class="z-3 position-relative">
+                        <span class="badge bg-dark font-9 mb-1">MÃ: DMX500K</span>
+                        <h5 class="fw-black mb-1 font-16">XẢ KHO PHỤ KIỆN</h5>
+                        <p class="small mb-2 opacity-90 font-12">Giảm trực tiếp 500k khi <br>mua gói combo 3 món.</p>
+                        <span class="btn btn-white-mini font-11 fw-bold px-3 py-1.5 rounded-pill shadow-sm">Lấy Mã Ngay</span>
                     </div>
+                    <i class="bi bi-smartwatch position-absolute end-0 bottom-0 opacity-15 font-96 mb-n3 me-2"></i>
                 </div>
-                <div class="col-12 col-md-8 text-md-end text-muted small">
-                    <i class="bi bi-info-circle me-1"></i> Bấm vào tiêu đề bảng để sắp xếp | Di chuột vào hành động để xem chi tiết
+
+                <div class="sub-banner-box rounded-4 overflow-hidden position-relative flex-grow-1 p-4 text-white d-flex align-items-center" style="background: linear-gradient(45deg, #00c6ff, #0072ff); min-height: 182px;">
+                    <div class="z-3 position-relative">
+                        <span class="badge bg-danger font-9 mb-1">TRẢ GÓP 0%</span>
+                        <h5 class="fw-black mb-1 font-16">ĐẶC QUYỀN LAPTOP</h5>
+                        <p class="small mb-2 opacity-90 font-12">Không cần trả trước - Nhận máy <br>ngay sau 5 phút xét duyệt.</p>
+                        <span class="btn btn-white-mini font-11 fw-bold px-3 py-1.5 rounded-pill shadow-sm">Đăng Ký Thử</span>
+                    </div>
+                    <i class="bi bi-cpu position-absolute end-0 bottom-0 opacity-15 font-96 mb-n3 me-2"></i>
                 </div>
             </div>
         </div>
 
-        <div class="table-responsive">
-            <table class="table table-hover align-middle mb-0" id="productTable">
-                <thead class="bg-light-smooth text-secondary border-bottom">
-                    <tr>
-                        <th scope="col" class="ps-4 text-center" style="width: 80px;">Mã số</th>
-                        <th scope="col" style="width: 100px;">Hình ảnh</th>
-                        <th scope="col">Tên mặt hàng sản phẩm</th>
-                        <th scope="col" style="width: 160px;">Giá bán công khai</th>
-                        <th scope="col" class="d-none d-lg-table-cell" style="max-width: 300px;">Mô tả kỹ thuật</th>
-                        <th scope="col" class="text-center" style="width: 120px;">Danh mục</th>
-                        <th scope="col" class="text-end pe-4" style="width: 150px;">Thao tác</th>
-                    </tr>
-                </thead>
-                <tbody class="border-top-0">
-                    @foreach (var item in Model)
+        <div class="row g-4" id="product-showcase">
+
+            <div class="col-12 col-lg-4 col-xl-3">
+                <div class="card border-0 shadow-sm rounded-4 overflow-hidden sticky-sidebar bg-white p-3">
+                    <div class="d-flex align-items-center mb-3 pb-2 border-bottom">
+                        <div class="bg-primary bg-opacity-10 text-dmx rounded-3 p-2 me-2">
+                            <i class="bi bi-list-stars fs-5"></i>
+                        </div>
+                        <h6 class="text-dark fw-black mb-0 font-14 text-uppercase">Danh Mục Thiết Bị</h6>
+                    </div>
+
+                    <div class="vertical-nav-dmx d-flex flex-column gap-1.5">
+                        <button onclick="filterCategory('all')" class="v-nav-item active-v-cat">
+                            <span class="v-nav-icon"><i class="bi bi-grid-1x2-fill"></i></span>
+                            <span class="v-nav-text">Tất cả sản phẩm kho</span>
+                            <span class="v-nav-badge">ALL</span>
+                        </button>
+                        <button onclick="filterCategory('1')" class="v-nav-item">
+                            <span class="v-nav-icon"><i class="bi bi-laptop"></i></span>
+                            <span class="v-nav-text">Máy Tính Xách Tay (Laptop)</span>
+                            <span class="v-nav-badge">HOT</span>
+                        </button>
+                        <button onclick="filterCategory('2')" class="v-nav-item">
+                            <span class="v-nav-icon"><i class="bi bi-pc-display"></i></span>
+                            <span class="v-nav-text">Máy Tính Để Bàn (PC)</span>
+                            <span class="v-nav-badge">NEW</span>
+                        </button>
+                        <button onclick="filterCategory('3')" class="v-nav-item">
+                            <span class="v-nav-icon"><i class="bi bi-phone"></i></span>
+                            <span class="v-nav-text">Điện Thoại Di Động</span>
+                            <span class="v-nav-badge">BEST</span>
+                        </button>
+                        <button onclick="filterCategory('4')" class="v-nav-item">
+                            <span class="v-nav-icon"><i class="bi bi-smartwatch"></i></span>
+                            <span class="v-nav-text">Đồng Hồ Thông Minh</span>
+                            <span class="v-nav-badge">SALE</span>
+                        </button>
+                        <button onclick="filterCategory('5')" class="v-nav-item">
+                            <span class="v-nav-icon"><i class="bi bi-earbuds"></i></span>
+                            <span class="v-nav-text">Phụ Kiện Công Nghệ</span>
+                            <span class="v-nav-badge">99K</span>
+                        </button>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-top">
+                        <label class="form-label font-11 fw-bold text-secondary text-uppercase mb-2">Bộ lọc giá bán</label>
+                        <select id="priceFilter" class="form-select border rounded-3 font-13 bg-light-focus py-2" onchange="applyFilters()">
+                            <option value="all">Hiển thị mọi mức giá</option>
+                            <option value="under500">Phân khúc dưới 500 $</option>
+                            <option value="500to1500">Tầm trung 500 $ - 1500 $</option>
+                            <option value="over1500">Cao cấp trên 1500 $</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-12 col-lg-8 col-xl-9">
+
+                <div class="bg-white p-3 rounded-4 shadow-sm mb-3 d-flex flex-wrap justify-content-between align-items-center gap-3">
+                    <div class="d-flex align-items-center gap-2 flex-grow-1" style="min-width: 280px;">
+                        <div class="position-relative w-100">
+                            <input type="text" id="dmxSearchInput" onkeyup="applyFilters()" class="form-control border ps-4 py-2.5 rounded-3 font-13 bg-light-focus" placeholder="Tìm sản phẩm theo tên..." />
+                            <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
+                        </div>
+                    </div>
+
+                    <div class="d-flex align-items-center gap-2">
+                        <span class="text-muted small font-12"><i class="bi bi-sort-down-alt me-1"></i>Sắp xếp:</span>
+                        <select id="sortFilter" class="form-select border rounded-3 font-13 bg-light-focus py-2" style="width: 200px;" onchange="applyFilters()">
+                            <option value="default">Theo mặc định kho</option>
+                            <option value="priceAsc">Giá tăng dần</option>
+                            <option value="priceDesc">Giá giảm dần</option>
+                            <option value="nameAsc">Tên sản phẩm A -> Z</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="flash-sale-ribbon p-3 rounded-top-4 d-flex justify-content-between align-items-center text-white gap-2 shadow-sm">
+                    <div class="d-flex align-items-center gap-2">
+                        <h5 class="mb-0 fw-black text-uppercase tracking-wider font-15 italic-text text-flash-animate">
+                            <i class="bi bi-lightning-charge-fill text-warning me-1"></i> GIỜ VÀNG FLASH SALE
+                        </h5>
+                        <div class="d-flex align-items-center gap-1 ms-3" id="flash-countdown">
+                            <span class="timer-box" id="hours-box">00</span>:
+                            <span class="timer-box" id="mins-box">00</span>:
+                            <span class="timer-box" id="secs-box">00</span>
+                        </div>
+                    </div>
+                    <span class="badge bg-white text-danger fw-bold rounded-pill px-3 font-11 shadow-sm">BẢO HÀNH CHÍNH HÃNG</span>
+                </div>
+
+                <div class="row g-2 bg-white p-3 rounded-bottom-4 shadow-sm border-x border-bottom mb-4" id="product-grid">
+                    @if (Model != null && Model.Any())
                     {
-                        <tr>
-                            <td class="ps-4 text-center fw-semibold text-muted">
-                                #@Html.DisplayFor(modelItem => item.Id)
-                            </td>
+                        foreach (var item in Model)
+                        {
+                            <div class="col-6 col-sm-4 col-md-4 col-xl-3 product-item-card animate__animated animate__fadeIn"
+                                 data-category="@item.CategoryId"
+                                 data-price="@item.Price"
+                                 data-name="@item.Name.ToLower()">
 
-                            <td>
-                                <div class="product-thumb-frame border rounded-3 bg-light d-flex align-items-center justify-content-center overflow-hidden shadow-xs" style="width: 64px; height: 64px;">
-                                    @if (!string.IsNullOrEmpty(item.ImageUrl))
-                                    {
-                                        <img src="@item.ImageUrl" alt="@item.Name" class="w-100 h-100 object-fit-cover transition-img" />
-                                    }
-                                    else
-                                    {
-                                        <div class="text-black-30 d-flex flex-column align-items-center">
-                                            <i class="bi bi-image fs-5 line-height-1"></i>
-                                            <span style="font-size: 8px;" class="fw-medium text-uppercase text-muted mt-1">No Image</span>
+                                <div class="card h-100 p-2 position-relative dmx-premium-card transition-card bg-white border-smooth">
+
+                                    <div class="position-absolute top-0 start-0 mt-2 ms-2 z-3 d-flex flex-column gap-1">
+                                        <span class="badge bg-warning text-dark font-9 fw-bold px-1.5 py-1 rounded-1 shadow-sm">Trả góp 0%</span>
+                                        @if (item.Price > 1200)
+                                        {
+                                            <span class="badge bg-danger text-white font-9 fw-bold px-1.5 py-1 rounded-1 shadow-sm animate__animated animate__pulse animate__infinite">BEST DEAL</span>
+                                        }
+                                    </div>
+
+                                    <div class="product-img-frame d-flex align-items-center justify-content-center p-2 mb-2 bg-white position-relative rounded-3" style="height: 170px; overflow: hidden;">
+                                        @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                        {
+                                            <img src="@item.ImageUrl" alt="@item.Name" class="img-fluid transition-img object-contain-center" />
+                                        }
+                                        else
+                                        {
+                                            <div class="text-center text-muted">
+                                                <i class="bi bi-box-seam display-6 d-block mb-1 opacity-25"></i>
+                                                <span class="font-10">No Image</span>
+                                            </div>
+                                        }
+                                    </div>
+
+                                    <div class="card-body p-1 d-flex flex-column justify-content-between flex-grow-1">
+                                        <div>
+                                            <h6 class="product-title-text font-13 fw-bold text-dark mb-1 text-clamp-2">@item.Name</h6>
+
+                                            <div class="mb-2">
+                                                <span class="text-danger fw-extrabold font-15">@item.Price.ToString("N2") <small>$</small></span>
+                                                <span class="text-muted text-decoration-line-through font-11 ms-1">@((item.Price * 1.25m).ToString("N0")) $</span>
+                                            </div>
+
+                                            <div class="p-2 rounded-2 mb-2 bg-gift font-10 text-dark border-dashed-orange">
+                                                <i class="bi bi-gift-fill text-danger me-1 animate__animated animate__swing animate__infinite animate__slower d-inline-block"></i> Quà tặng: Combo Bảo Hành Vàng
+                                            </div>
                                         </div>
-                                    }
+
+                                        <div>
+                                            <div class="mb-2">
+                                                <div class="progress rounded-pill position-relative shadow-inner" style="height: 14px; background-color: #fce8e6;">
+                                                    <div class="progress-bar progress-bar-striped progress-bar-animated rounded-pill bg-gradient-orange" role="progressbar" style="width: 72%;"></div>
+                                                    <span class="position-absolute w-100 text-center font-9 text-white fw-bold style-lh-14">Đã bán 72%</span>
+                                                </div>
+                                            </div>
+
+                                            <div class="pt-2 border-top d-flex justify-content-between align-items-center gap-1">
+                                                <a asp-action="Display" asp-route-id="@item.Id" class="btn btn-dmx-buy flex-grow-1 font-11 py-1.5 rounded-2 text-center fw-bold transition-all">
+                                                    Xem chi tiết
+                                                </a>
+                                                <div class="d-flex gap-1">
+                                                    <a asp-action="Update" asp-route-id="@item.Id" class="btn btn-card-mini btn-outline-info" title="Sửa bản ghi">
+                                                        <i class="bi bi-pencil-fill"></i>
+                                                    </a>
+                                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-card-mini btn-outline-danger" title="Xóa">
+                                                        <i class="bi bi-trash3-fill"></i>
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
                                 </div>
-                            </td>
-
-                            <td>
-                                <div class="fw-bold text-dark mb-0 text-truncate-1">@item.Name</div>
-                                <span class="badge bg-light text-dark border rounded-pill px-2 py-0.5 mt-1" style="font-size: 10px;">
-                                    <i class="bi bi-tag-fill text-secondary me-1"></i>Hàng chính hãng
-                                </span>
-                            </td>
-
-                            <td>
-                                <span class="fw-bold text-primary fs-6">
-                                    @item.Price.ToString("N2") <span class="small fw-normal text-secondary">$</span>
-                                </span>
-                            </td>
-
-                            <td class="d-none d-lg-table-cell text-muted text-truncate-2 small">
-                                @if (!string.IsNullOrEmpty(item.Description))
-                                {
-                                    @item.Description
-                                }
-                                else
-                                {
-                                    <span class="text-black-30 fst-italic">Chưa có thông số dữ liệu...</span>
-                                }
-                            </td>
-
-                            <td class="text-center">
-                                <span class="badge bg-info-soft text-info rounded px-3 py-1.5 fw-semibold border border-info-subtle">
-                                    Mã: @item.CategoryId
-                                </span>
-                            </td>
-
-                            <td class="text-end pe-4">
-                                <div class="d-inline-flex gap-1">
-                                    <a asp-action="Display" asp-route-id="@item.Id" class="btn btn-icon-action btn-outline-primary" title="Xem chi tiết">
-                                        <i class="bi bi-eye"></i>
-                                    </a>
-                                    <a asp-action="Update" asp-route-id="@item.Id" class="btn btn-icon-action btn-outline-info" title="Sửa thông tin">
-                                        <i class="bi bi-pencil"></i>
-                                    </a>
-                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-icon-action btn-outline-danger" title="Xóa mặt hàng">
-                                        <i class="bi bi-trash3"></i>
-                                    </a>
-                                </div>
-                            </td>
-                        </tr>
+                            </div>
+                        }
                     }
-                    @if (!Model.Any())
+                    else
                     {
-                        <tr>
-                            <td colspan="7" class="text-center py-5 text-muted">
-                                <i class="bi bi-inbox display-4 d-block mb-2 text-black-30"></i>
-                                Kho hàng hiện tại trống. Hãy bấm nút "Thêm sản phẩm mới" để bắt đầu!
-                            </td>
-                        </tr>
+                        <div class="col-12 text-center py-5 text-muted">
+                            <i class="bi bi-folder-x display-3 text-muted opacity-30 d-block mb-2"></i>
+                            <span class="font-13 fw-medium">Không tìm thấy sản phẩm nào phù hợp với bộ lọc hiện hành.</span>
+                        </div>
                     }
-                </tbody>
-            </table>
+                </div>
+
+            </div>
         </div>
+
     </div>
 </div>
 
+<style>
+    .border-dmx {
+        border-color: #00aef0 !important;
+    }
+
+    .text-dmx {
+        color: #0072bc;
+    }
+
+    .font-96 {
+        font-size: 6rem;
+    }
+
+    .style-tracking-tight {
+        tracking-wider: -0.03em;
+    }
+
+    /* Hiệu ứng quét bóng cho nút Đăng bán */
+    .btn-shine {
+        position: relative;
+        overflow: hidden;
+    }
+
+        .btn-shine::after {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -60%;
+            width: 30%;
+            height: 200%;
+            background: rgba(255, 255, 255, 0.3);
+            transform: rotate(30deg);
+            transition: none;
+            animation: shineEffect 4s infinite linear;
+        }
+
+    @@keyframes shineEffect {
+        0% {
+            left: -60%;
+        }
+
+        10% {
+            left: 130%;
+        }
+
+        100% {
+            left: 130%;
+        }
+    }
+
+    /* Mega banner & Sub banner */
+    .banner-overlay-particles {
+        position: absolute;
+        width: 100%;
+        height: 100%;
+        top: 0;
+        left: 0;
+        background-image: radial-gradient(rgba(255,255,255,0.15) 1px, transparent 0);
+        background-size: 24px 24px;
+        opacity: 0.6;
+        pointer-events: none;
+    }
+
+    .btn-white-mini {
+        background-color: #fff;
+        color: #333;
+        text-decoration: none;
+        border: none;
+        transition: all 0.2s;
+    }
+
+        .btn-white-mini:hover {
+            background-color: #f8f9fa;
+            transform: scale(1.05);
+        }
+
+    .sub-banner-box {
+        transition: transform 0.3s;
+        cursor: pointer;
+    }
+
+        .sub-banner-box:hover {
+            transform: translateY(-3px);
+        }
+
+    /* SIDEBAR ĐIỀU HƯỚNG DỌC ĐẶC SẮC CHẠY MƯỢT */
+    .sticky-sidebar {
+        position: sticky;
+        top: 20px;
+        z-index: 10;
+    }
+
+    .v-nav-item {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        background: #fff;
+        border: 1px solid #f1f5f9;
+        border-radius: 10px;
+        padding: 10px 14px;
+        color: #334155;
+        cursor: pointer;
+        transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+        position: relative;
+        overflow: hidden;
+        text-align: left;
+    }
+
+        .v-nav-item .v-nav-icon {
+            font-size: 14px;
+            color: #64748b;
+            margin-right: 10px;
+            transition: color 0.2s;
+        }
+
+        .v-nav-item .v-nav-text {
+            flex-grow: 1;
+            font-size: 13px;
+            font-weight: 600;
+        }
+
+        .v-nav-item .v-nav-badge {
+            font-size: 9px;
+            padding: 2px 6px;
+            background-color: #f1f5f9;
+            border-radius: 4px;
+            color: #64748b;
+            font-weight: bold;
+        }
+
+        /* Hiệu ứng khi Hover vào mục điều hướng dọc */
+        .v-nav-item:hover {
+            background-color: #f0f9ff;
+            border-color: #00aef0;
+            color: #0072bc;
+            padding-left: 18px;
+        }
+
+            .v-nav-item:hover .v-nav-icon {
+                color: #00aef0;
+            }
+
+        /* Mục điều hướng dọc được kích hoạt (Active) */
+        .v-nav-item.active-v-cat {
+            background: linear-gradient(90deg, #0072bc, #00aef0);
+            border-color: #0072bc;
+            color: #fff;
+            box-shadow: 0 4px 12px rgba(0, 114, 188, 0.2);
+        }
+
+            .v-nav-item.active-v-cat .v-nav-icon, .v-nav-item.active-v-cat .v-nav-badge {
+                color: #fff;
+                background-color: rgba(255,255,255,0.2);
+            }
+
+    /* Flash sale ribbon */
+    .flash-sale-ribbon {
+        background: linear-gradient(90deg, #e11d48, #f43f5e);
+    }
+
+    .italic-text {
+        font-style: italic;
+    }
+
+    .text-flash-animate {
+        animation: pulse 1.5s infinite;
+    }
+
+    .timer-box {
+        background-color: #0f172a;
+        color: #fff;
+        padding: 3px 6px;
+        border-radius: 5px;
+        font-weight: bold;
+        font-size: 13px;
+        margin: 0 2px;
+    }
+
+    /* Cấu trúc lưới và Card sản phẩm Premium */
+    .border-smooth {
+        border: 1px solid #f1f5f9;
+        border-radius: 12px;
+    }
+
+    .text-clamp-2 {
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+        height: 38px;
+        line-height: 19px;
+    }
+
+    .object-contain-center {
+        max-height: 150px;
+        object-fit: contain;
+        transition: transform 0.3s ease;
+    }
+
+    .bg-gift {
+        background-color: #fff9f5;
+        border: 1px dashed #f97316;
+    }
+
+    .style-lh-14 {
+        line-height: 14px;
+    }
+
+    .bg-gradient-orange {
+        background: linear-gradient(90deg, #f97316, #ef4444);
+    }
+
+    .bg-light-focus:focus {
+        background-color: #fff !important;
+        border-color: #00aef0 !important;
+        box-shadow: 0 0 0 3px rgba(0, 174, 240, 0.15) !important;
+        outline: none;
+    }
+
+    /* Hiệu ứng phóng to và đổ bóng Card */
+    .dmx-premium-card {
+        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+        .dmx-premium-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            border-color: #00aef0;
+            z-index: 3;
+        }
+
+            .dmx-premium-card:hover .object-contain-center {
+                transform: scale(1.06);
+            }
+
+    /* Nút bấm mua hàng và các icon mini */
+    .btn-dmx-gradient {
+        background: linear-gradient(90deg, #0072bc, #00aef0);
+        color: #fff;
+        border: none;
+    }
+
+        .btn-dmx-gradient:hover {
+            background: linear-gradient(90deg, #005a96, #0096d1);
+            color: #fff;
+        }
+
+    .btn-dmx-buy {
+        border: 1px solid #00aef0;
+        color: #00aef0;
+        background: #fff;
+    }
+
+        .btn-dmx-buy:hover {
+            background: #00aef0;
+            color: #fff;
+        }
+
+    .btn-card-mini {
+        width: 28px;
+        height: 28px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        padding: 0;
+        border-radius: 6px;
+        font-size: 11px;
+        background: #fff;
+        transition: all 0.2s;
+    }
+
+        .btn-card-mini:hover {
+            color: #fff !important;
+            transform: translateY(-1px);
+        }
+
+    /* Kích thước font */
+    .font-9 {
+        font-size: 9px;
+    }
+
+    .font-10 {
+        font-size: 10px;
+    }
+
+    .font-11 {
+        font-size: 11px;
+    }
+
+    .font-12 {
+        font-size: 12px;
+    }
+
+    .font-13 {
+        font-size: 13px;
+    }
+
+    .font-14 {
+        font-size: 14px;
+    }
+
+    .font-15 {
+        font-size: 15px;
+    }
+
+    .font-16 {
+        font-size: 16px;
+    }
+
+    .fw-black {
+        font-weight: 900;
+    }
+
+    .fw-extrabold {
+        font-weight: 800;
+    }
+</style>
+
 @section Scripts {
     <script>
-        document.getElementById('tableSearchInput').addEventListener('keyup', function () {
-            var value = this.value.toLowerCase().trim();
-            var rows = document.querySelectorAll('#productTable tbody tr');
+        let selectedCategory = 'all';
 
-            rows.forEach(function (row) {
-                // Kiểm tra xem hàng đó có chứa dữ liệu rỗng không
-                if (row.cells.length > 1) {
-                    var productName = row.cells[2].textContent.toLowerCase();
-                    var productId = row.cells[0].textContent.toLowerCase();
-                    var productDesc = row.cells[4].textContent.toLowerCase();
+        // 1. Hàm lọc danh mục từ thanh điều hướng dọc
+        function filterCategory(catId) {
+            selectedCategory = catId;
 
-                    if (productName.includes(value) || productId.includes(value) || productDesc.includes(value)) {
-                        row.style.display = "";
-                    } else {
-                        row.style.display = "none";
-                    }
+            // Thay đổi Class active cho mục được nhấn hiển thị
+            document.querySelectorAll('.v-nav-item').forEach(btn => {
+                btn.classList.remove('active-v-cat');
+            });
+            event.currentTarget.classList.add('active-v-cat');
+
+            applyFilters();
+        }
+
+        // 2. Bộ lọc xử lý đa điều kiện tổng hợp
+        function applyFilters() {
+            const searchQuery = document.getElementById('dmxSearchInput').value.toLowerCase().trim();
+            const priceRange = document.getElementById('priceFilter').value;
+            const sortType = document.getElementById('sortFilter').value;
+            const products = document.querySelectorAll('.product-item-card');
+
+            let filteredArray = [];
+
+            products.forEach(card => {
+                const category = card.getAttribute('data-category');
+                const price = parseFloat(card.getAttribute('data-price'));
+                const name = card.getAttribute('data-name');
+
+                const matchCategory = (selectedCategory === 'all' || category === selectedCategory);
+                const matchSearch = (name.includes(searchQuery));
+
+                let matchPrice = true;
+                if (priceRange === 'under500') matchPrice = (price < 500);
+                else if (priceRange === '500to1500') matchPrice = (price >= 500 && price <= 1500);
+                else if (priceRange === 'over1500') matchPrice = (price > 1500);
+
+                if (matchCategory && matchSearch && matchPrice) {
+                    card.style.display = "block";
+                    filteredArray.push(card);
+                } else {
+                    card.style.display = "none";
                 }
             });
+
+            // Tiến hành sắp xếp danh sách theo tiêu chí được lựa chọn
+            const grid = document.getElementById('product-grid');
+            if (sortType !== 'default' && filteredArray.length > 0) {
+                let sortedList = Array.from(filteredArray).sort((a, b) => {
+                    let pA = parseFloat(a.getAttribute('data-price'));
+                    let pB = parseFloat(b.getAttribute('data-price'));
+                    let nA = a.getAttribute('data-name');
+                    let nB = b.getAttribute('data-name');
+
+                    if (sortType === 'priceAsc') return pA - pB;
+                    if (sortType === 'priceDesc') return pB - pA;
+                    if (sortType === 'nameAsc') return nA.localeCompare(nB);
+                    return 0;
+                });
+
+                sortedList.forEach(node => grid.appendChild(node));
+            }
+        }
+
+        // 3. Hệ thống đồng hồ đếm ngược Flash Sale
+        function runFlashSaleTimer() {
+            let initialSeconds = 3 * 3600 + 12 * 60 + 44; // Thời gian chạy mặc định ban đầu
+
+            const timer = setInterval(() => {
+                if (initialSeconds <= 0) {
+                    initialSeconds = 4 * 3600; // Tự động lặp lại khi hết chu kỳ
+                }
+                initialSeconds--;
+
+                let h = Math.floor(initialSeconds / 3600);
+                let m = Math.floor((initialSeconds % 3600) / 60);
+                let s = initialSeconds % 60;
+
+                document.getElementById('hours-box').innerText = String(h).padStart(2, '0');
+                document.getElementById('mins-box').innerText = String(m).padStart(2, '0');
+                document.getElementById('secs-box').innerText = String(s).padStart(2, '0');
+            }, 1000);
+        }
+
+        document.addEventListener("DOMContentLoaded", () => {
+            runFlashSaleTimer();
         });
     </script>
-
-    <style>
-        /* Khung mềm cho khối */
-        .bg-primary-soft {
-            background-color: #eef5ff;
-        }
-
-        .bg-success-soft {
-            background-color: #e8f9ee;
-        }
-
-        .bg-info-soft {
-            background-color: #e6f9ff;
-        }
-
-        .bg-light-smooth {
-            background-color: #fcfdfe;
-        }
-
-        .text-black-30 {
-            color: #bcbcbc;
-        }
-
-        /* Hiệu ứng cắt chữ thông minh */
-        .text-truncate-1 {
-            display: -webkit-box;
-            -webkit-line-clamp: 1;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        .text-truncate-2 {
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-
-        /* Tương tác ảnh */
-        .object-fit-cover {
-            object-fit: cover;
-        }
-
-        .transition-img {
-            transition: transform 0.2s ease;
-        }
-
-        .product-thumb-frame:hover .transition-img {
-            transform: scale(1.1);
-        }
-
-        /* Nút icon hành động hình tròn thanh lịch */
-        .btn-icon-action {
-            width: 32px;
-            height: 32px;
-            padding: 0;
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            border-radius: 50%;
-            font-size: 14px;
-            transition: all 0.2s ease;
-            background: transparent;
-        }
-
-            .btn-icon-action:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 4px 6px rgba(0,0,0,0.08);
-            }
-
-        /* Focus input mịn */
-        .bg-light-focus:focus {
-            background-color: #fff !important;
-            border-color: #86b7fe !important;
-            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25) !important;
-        }
-
-        .transition-all {
-            transition: all 0.2s ease;
-        }
-
-            .transition-all:hover {
-                transform: translateY(-1px);
-                box-shadow: 0 4px 12px rgba(13,110,253,0.2) !important;
-            }
-    </style>
 }

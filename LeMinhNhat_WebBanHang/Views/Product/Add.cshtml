@@ -4,111 +4,97 @@
     ViewData["Title"] = "Thêm Sản Phẩm Mới";
 }
 
-<div class="container py-4">
-    <div class="mb-3">
-        <a asp-action="Index" class="btn btn-light border btn-sm rounded-pill text-muted px-3">
-            <i class="bi bi-arrow-left me-1"></i> Quay lại danh sách
+<div class="container-fluid py-2">
+    <div class="mb-4 d-flex justify-content-between align-items-center">
+        <div>
+            <h3 class="text-dark fw-bold mb-1 d-flex align-items-center">
+                <i class="bi bi-box-seam-fill text-primary me-2 fs-4"></i> Thêm Mặt Hàng Vào Kho
+            </h3>
+            <p class="text-muted small mb-0">Khởi tạo bản ghi mới cho các thiết bị công nghệ và linh kiện điện tử.</p>
+        </div>
+        <a asp-action="Index" class="btn btn-white border btn-sm px-3 rounded-2 text-muted fw-medium">
+            <i class="bi bi-arrow-left me-1"></i> Trở về kho hàng
         </a>
     </div>
 
-    <div class="card shadow-sm border-0 rounded-3 overflow-hidden">
-        <div class="card-header bg-white py-3 border-bottom-smooth">
-            <h4 class="card-title mb-0 text-primary fw-semibold d-flex align-items-center">
-                <i class="bi bi-box-seam-fill me-2"></i> Thêm Sản Phẩm Công Nghệ Mới
-            </h4>
-        </div>
-
-        <div class="card-body p-4 bg-light-curve">
+    <div class="card shadow-sm border-0 rounded-4 overflow-hidden bg-white">
+        <div class="card-body p-4 p-lg-5">
             <form asp-action="Add" enctype="multipart/form-data" method="post">
-                <div asp-validation-summary="ModelOnly" class="alert alert-danger d-none"></div>
+                <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
 
                 <div class="row g-4">
-                    <div class="col-lg-7">
-                        <div class="p-3 bg-white rounded-3 shadow-xs border">
-                            <h6 class="text-secondary border-bottom pb-2 mb-3 fw-bold">
-                                <i class="bi bi-file-earmark-text me-1"></i> Thông tin cơ bản
-                            </h6>
+                    <div class="col-12 col-lg-7">
+                        <h5 class="fw-bold text-dark border-start border-3 border-primary ps-2 mb-4">Thông tin cơ bản</h5>
 
-                            <div class="form-group mb-3">
-                                <label asp-for="Name" class="form-label fw-semibold text-dark">Tên sản phẩm <span class="text-danger">*</span></label>
-                                <div class="input-group">
-                                    <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-tag"></i></span>
-                                    <input asp-for="Name" class="form-control border-start-0 ps-1" placeholder="Ví dụ: Laptop ASUS Zenbook 14" />
+                        <div class="mb-3">
+                            <label asp-for="Name" class="form-label fw-semibold text-secondary small">Tên sản phẩm <span class="text-danger">*</span></label>
+                            <div class="input-group border rounded-3 bg-light">
+                                <span class="input-group-text bg-transparent border-0 text-muted"><i class="bi bi-fonts"></i></span>
+                                <input asp-for="Name" class="form-control border-0 bg-transparent py-2.5 shadow-none text-dark fw-medium" placeholder="Ví dụ: Laptop ASUS ROG Strix G16..." />
+                            </div>
+                            <span asp-validation-for="Name" class="text-danger small"></span>
+                        </div>
+
+                        <div class="row g-3 mb-3">
+                            <div class="col-12 col-sm-6">
+                                <label asp-for="Price" class="form-label fw-semibold text-secondary small">Giá niêm yết ($) <span class="text-danger">*</span></label>
+                                <div class="input-group border rounded-3 bg-light">
+                                    <span class="input-group-text bg-transparent border-0 text-muted"><i class="bi bi-currency-dollar"></i></span>
+                                    <input asp-for="Price" class="form-control border-0 bg-transparent py-2.5 shadow-none text-dark fw-semibold" type="number" step="0.01" placeholder="0.00" />
                                 </div>
-                                <span asp-validation-for="Name" class="text-danger small mt-1 d-block"></span>
+                                <span asp-validation-for="Price" class="text-danger small"></span>
                             </div>
 
-                            <div class="row">
-                                <div class="col-md-6 mb-3">
-                                    <label asp-for="Price" class="form-label fw-semibold text-dark">Giá bán ($) <span class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-currency-dollar"></i></span>
-                                        <input asp-for="Price" class="form-control border-start-0 ps-1" type="number" step="0.01" placeholder="0.00" />
-                                    </div>
-                                    <span asp-validation-for="Price" class="text-danger small mt-1 d-block"></span>
+                            <div class="col-12 col-sm-6">
+                                <label asp-for="CategoryId" class="form-label fw-semibold text-secondary small">Danh mục phân loại <span class="text-danger">*</span></label>
+                                <div class="input-group border rounded-3 bg-light">
+                                    <span class="input-group-text bg-transparent border-0 text-muted"><i class="bi bi-tags-fill"></i></span>
+                                    <select asp-for="CategoryId" class="form-select border-0 bg-transparent py-2.5 shadow-none text-muted" asp-items="ViewBag.Categories">
+                                        <option value="">-- Chọn nhóm ngành --</option>
+                                    </select>
                                 </div>
-
-                                <div class="col-md-6 mb-3">
-                                    <label asp-for="CategoryId" class="form-label fw-semibold text-dark">Danh mục ngành hàng <span class="text-danger">*</span></label>
-                                    <div class="input-group">
-                                        <span class="input-group-text bg-light border-end-0 text-muted"><i class="bi bi-grid"></i></span>
-                                        <select asp-for="CategoryId" class="form-select border-start-0 ps-1" asp-items="ViewBag.Categories">
-                                            <option value="">-- Chọn danh mục --</option>
-                                        </select>
-                                    </div>
-                                    <span asp-validation-for="CategoryId" class="text-danger small mt-1 d-block"></span>
-                                </div>
+                                <span asp-validation-for="CategoryId" class="text-danger small"></span>
                             </div>
+                        </div>
 
-                            <div class="form-group mb-2">
-                                <label asp-for="Description" class="form-label fw-semibold text-dark">Mô tả thông số kỹ thuật</label>
-                                <textarea asp-for="Description" class="form-control" rows="5" placeholder="Nhập cấu hình chi tiết (CPU, RAM, VGA, ổ cứng,...)"></textarea>
-                                <span asp-validation-for="Description" class="text-danger small mt-1 d-block"></span>
-                            </div>
+                        <div class="mb-3">
+                            <label asp-for="Description" class="form-label fw-semibold text-secondary small">Thông số kỹ thuật & Mô tả ngắn</label>
+                            <textarea asp-for="Description" class="form-control border rounded-3 p-3 shadow-none text-muted" rows="5" style="background-color: #fafafa;" placeholder="Nhập cấu hình chi tiết (CPU, RAM, VGA) hoặc tình trạng linh kiện..."></textarea>
+                            <span asp-validation-for="Description" class="text-danger small"></span>
                         </div>
                     </div>
 
-                    <div class="col-lg-5">
-                        <div class="p-3 bg-white rounded-3 shadow-xs border h-100">
-                            <h6 class="text-secondary border-bottom pb-2 mb-3 fw-bold">
-                                <i class="bi bi-images me-1"></i> Hình ảnh sản phẩm
-                            </h6>
+                    <div class="col-12 col-lg-5 ps-lg-4 border-start-lg">
+                        <h5 class="fw-bold text-dark border-start border-3 border-info ps-2 mb-4">Hình ảnh minh họa</h5>
 
-                            <div class="mb-4">
-                                <label for="imageUrl" class="form-label fw-semibold text-dark d-flex justify-content-between">
-                                    <span>Ảnh đại diện chính</span>
-                                    <small class="text-muted fw-normal">(Định dạng: .png, .jpg)</small>
-                                </label>
-                                <div class="input-group">
-                                    <input type="file" name="imageUrl" id="imageUrl" class="form-control" accept="image/*" onchange="previewMainImage(this)" />
+                        <div class="mb-4">
+                            <label class="form-label fw-semibold text-secondary small">Ảnh đại diện chính</label>
+                            <div class="border rounded-4 p-4 text-center bg-light position-relative overflow-hidden d-flex align-items-center justify-content-center" style="min-height: 200px; border: 2px dashed #cbd5e1 !important;">
+                                <div id="main-placeholder">
+                                    <i class="bi bi-cloud-arrow-up display-5 text-muted d-block mb-2"></i>
+                                    <span class="text-muted small d-block">Click chọn hoặc thả file ảnh đại diện tại đây</span>
                                 </div>
-                                <div class="mt-2 text-center bg-light rounded-3 p-2 border border-dashed d-flex align-items-center justify-content-center" style="min-height: 120px;">
-                                    <img id="main-preview" src="#" alt="Xem trước ảnh chính" class="img-fluid rounded d-none" style="max-height: 100px;" />
-                                    <div id="main-placeholder" class="text-muted small"><i class="bi bi-image d-block fs-3 mb-1"></i>Chưa chọn ảnh chính</div>
-                                </div>
+                                <img id="main-preview" src="#" class="img-fluid rounded-2 d-none shadow-sm" style="max-height: 170px; object-fit: contain;" />
+                                <input type="file" name="imageUrl" class="position-absolute top-0 start-0 w-100 h-100 opacity-0" style="cursor: pointer;" accept="image/*" onchange="previewMainImage(this)" />
                             </div>
+                        </div>
 
-                            <div class="mb-2">
-                                <label for="imageUrls" class="form-label fw-semibold text-dark d-flex justify-content-between">
-                                    <span>Bộ ảnh mô tả phụ</span>
-                                    <small class="text-muted fw-normal">(Chọn nhiều file)</small>
-                                </label>
-                                <div class="input-group">
-                                    <input type="file" name="imageUrls" id="imageUrls" class="form-control" accept="image/*" multiple />
-                                </div>
-                                <div class="mt-2 text-muted small bg-light p-2 rounded border border-dashed text-center">
-                                    <i class="bi bi-images me-1"></i> Các ảnh phụ sẽ tự động được xếp vào thư viện chi tiết.
-                                </div>
+                        <div class="mb-3">
+                            <label class="form-label fw-semibold text-secondary small">Album ảnh phụ (Chọn nhiều file)</label>
+                            <div class="input-group border rounded-3 bg-light">
+                                <span class="input-group-text bg-transparent border-0 text-muted"><i class="bi bi-images"></i></span>
+                                <input type="file" name="imageUrls" class="form-control border-0 bg-transparent py-2.5 shadow-none text-muted" accept="image/*" multiple />
                             </div>
+                            <small class="text-muted d-block mt-2"><i class="bi bi-info-circle me-1"></i> Giữ phím <b>Ctrl</b> để quét chọn tải lên nhiều ảnh phụ một lúc.</small>
                         </div>
                     </div>
                 </div>
 
-                <div class="mt-4 pt-3 border-top d-flex justify-content-end gap-2">
-                    <a asp-action="Index" class="btn btn-outline-secondary px-4 rounded-pill">
+                <div class="mt-5 pt-3 border-top d-flex justify-content-end gap-2">
+                    <a asp-action="Index" class="btn btn-light border px-4 py-2.5 rounded-2 font-12 fw-medium text-muted">
                         Hủy bỏ
                     </a>
-                    <button type="submit" class="btn btn-primary px-4 rounded-pill shadow-sm">
+                    <button type="submit" class="btn btn-primary px-4 py-2.5 rounded-2 font-12 fw-semibold shadow-sm">
                         <i class="bi bi-cloud-arrow-up-fill me-1"></i> Đăng bán sản phẩm
                     </button>
                 </div>
@@ -117,11 +103,22 @@
     </div>
 </div>
 
+<style>
+    .btn-white {
+        background: #fff;
+    }
+
+    @@media (min-width: 992px) {
+        .border-start-lg {
+            border-start: 1px solid #e2e8f0;
+        }
+    }
+</style>
+
 @section Scripts {
     @{
         await Html.RenderPartialAsync("_ValidationScriptsPartial");
     }
-
     <script>
         function previewMainImage(input) {
             var preview = document.getElementById('main-preview');

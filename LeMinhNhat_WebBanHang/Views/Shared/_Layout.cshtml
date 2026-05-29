@@ -3,76 +3,374 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>@ViewData["Title"] - LeMinhNhat TechStore</title>
+    <title>@ViewData["Title"] - Nhật TechStore Admin</title>
     <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
     <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
     <link rel="stylesheet" href="~/LeMinhNhat_WebBanHang.styles.css" asp-append-version="true" />
+
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --primary-gradient: linear-gradient(135deg, #0072bc 0%, #00aef0 100%);
+            --dark-bg: #0f172a;
+            --glass-bg: rgba(30, 41, 59, 0.7);
+        }
+
+        body {
+            background-color: #f4f6f9;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            overflow-x: hidden;
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        #page-loader {
+            position: fixed; top: 0; left: 0; width: 100%; height: 4px;
+            background: linear-gradient(90deg, #ff7b00, #00aef0, #0072bc, #ff7b00);
+            background-size: 300% 100%; z-index: 9999;
+            animation: loadingBar 2s infinite linear;
+            display: none;
+        }
+        @@keyframes loadingBar {
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
+        }
+
+        .admin-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .admin-sidebar {
+            width: var(--sidebar-width);
+            background: var(--dark-bg);
+            box-shadow: 4px 0 25px rgba(15, 23, 42, 0.15);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; bottom: 0; left: 0;
+            z-index: 1040;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .sidebar-brand-box {
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .menu-sections-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.25rem 0.75rem;
+        }
+
+        .menu-group-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #64748b;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            padding-left: 0.75rem;
+        }
+
+        .admin-v-menu {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .menu-item-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 0.25rem;
+            position: relative;
+        }
+
+        .menu-item-link i:first-child {
+            font-size: 16px;
+            margin-right: 12px;
+            transition: transform 0.3s;
+        }
+
+        .menu-item-link:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+            padding-left: 1.25rem;
+        }
+
+        .menu-item-link:hover i:first-child {
+            transform: scale(1.15) rotate(5deg);
+            color: #00aef0;
+        }
+
+        .menu-item-link.active {
+            background: var(--primary-gradient);
+            color: #fff !important;
+            box-shadow: 0 8px 20px rgba(0, 114, 188, 0.3);
+        }
+        .menu-item-link.active i:first-child {
+            color: #fff !important;
+        }
+
+        .user-panel-footer {
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+        }
+
+        .admin-main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+            transition: all 0.3s ease;
+        }
+
+        .admin-topbar {
+            height: 70px;
+            background: #fff;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            position: sticky; top: 0; z-index: 1020;
+        }
+
+        .topbar-action-btn {
+            width: 40px; height: 40px;
+            display: inline-flex; align-items: center; justify-content: center;
+            border-radius: 10px; background: #f1f5f9; color: #475569;
+            border: none; position: relative; transition: all 0.2s;
+        }
+        .topbar-action-btn:hover {
+            background: #e2e8f0; color: #0f172a; transform: translateY(-1px);
+        }
+
+        .cart-slide-panel {
+            position: fixed; top: 0; right: -400px; width: 400px; height: 100%;
+            background: #fff; box-shadow: -10px 0 40px rgba(0,0,0,0.15);
+            z-index: 1090; transition: right 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            display: flex; flex-direction: column;
+        }
+        .cart-slide-panel.open { right: 0; }
+        
+        .cart-panel-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(15, 23, 42, 0.4); backdrop-filter: blur(4px);
+            z-index: 1085; display: none;
+        }
+
+        body.dark-theme-active {
+            background-color: #0b0f19; color: #f1f5f9;
+        }
+        body.dark-theme-active .admin-topbar, 
+        body.dark-theme-active .card, 
+        body.dark-theme-active .cart-slide-panel {
+            background-color: #141b2d !important; border-color: #1e293b !important; color: #fff;
+        }
+        body.dark-theme-active .topbar-action-btn {
+            background-color: #1e293b; color: #94a3b8;
+        }
+
+        .view-body-container {
+            animation: fadeInPage 0.4s ease-out;
+        }
+        @@keyframes fadeInPage {
+            from { opacity: 0; transform: translateY(8px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-    <header class="custom-header">
-        <nav class="navbar navbar-expand-lg navbar-light bg-white border-bottom-smooth">
-            <div class="container py-2">
-                <a class="navbar-brand brand-logo" asp-area="" asp-controller="Home" asp-action="Index">
-                    <i class="bi bi-laptop-fill text-primary me-2"></i>Nhật <span class="text-primary fw-bold">TechStore</span>
-                </a>
-                <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target=".navbar-collapse" aria-controls="navbarSupportedContent"
-                        aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="navbar-collapse collapse d-sm-inline-flex justify-content-between">
-                    <ul class="navbar-nav mx-auto menu-links">
-                        <li class="nav-item">
-                            <a class="nav-link-custom" asp-area="" asp-controller="Home" asp-action="Index">
-                                <i class="bi bi-house-door me-1"></i> Trang Chủ
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link-custom" asp-area="" asp-controller="Product" asp-action="Index">
-                                <i class="bi bi-box-seam me-1"></i> Quản Lý Sản Phẩm
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link-custom" asp-area="" asp-controller="Category" asp-action="Index">
-                                <i class="bi bi-tags me-1"></i> Quản Lý Danh Mục
-                            </a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link-custom" asp-area="" asp-controller="Home" asp-action="Privacy">
-                                <i class="bi bi-shield-lock me-1"></i> Chính Sách
+
+    <div id="page-loader"></div>
+
+    <div class="admin-wrapper">
+
+        <aside class="admin-sidebar d-flex flex-column justify-content-between">
+            <div class="d-flex flex-column h-100">
+                
+                <div class="sidebar-brand-box py-3 px-4 d-flex align-items-center justify-content-between">
+                    <a class="text-decoration-none d-flex align-items-center" asp-controller="Home" asp-action="Index">
+                        <div class="bg-primary bg-opacity-25 p-2 rounded-3 me-2 text-info">
+                            <i class="bi bi-cpu-fill fs-4 animate__animated animate__pulse animate__infinite"></i>
+                        </div>
+                        <span class="text-white fw-black tracking-wide font-16">Nhật <span class="text-info fw-bold">TechStore</span></span>
+                    </a>
+                </div>
+
+                <div class="menu-sections-wrapper">
+                    
+                    <div class="menu-group-title">Bản điều khiển chính</div>
+                    <ul class="admin-v-menu">
+                        <li>
+                            <a class="menu-item-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")" asp-controller="Home" asp-action="Index">
+                                <span><i class="bi bi-speedometer2"></i> Trung tâm giám sát</span>
+                                <span class="badge bg-danger font-9">LIVE</span>
                             </a>
                         </li>
                     </ul>
-                    <div class="d-flex align-items-center gap-3">
-                        <div class="search-box d-none d-xl-flex">
-                            <input type="text" class="form-control form-control-sm rounded-pill" placeholder="Tìm sản phẩm..." />
+
+                    <div class="menu-group-title">Quản lý kho hàng & đơn bán</div>
+                    <ul class="admin-v-menu">
+                        <li>
+                            <a class="menu-item-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Product" ? "active" : "")" asp-controller="Product" asp-action="Index">
+                                <span><i class="bi bi-box-seam-fill"></i> Kho Hàng Sản Phẩm</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="menu-item-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Category" ? "active" : "")" asp-controller="Category" asp-action="Index">
+                                <span><i class="bi bi-tags-fill"></i> Danh Mục Ngành Hàng</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" onclick="toggleCartPanel()" class="menu-item-link">
+                                <span><i class="bi bi-cart4"></i> Đơn Hàng & Giỏ Hàng</span>
+                                <span class="badge bg-warning text-dark font-9 id-cart-badge">3</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="menu-group-title">Hệ thống & Bảo mật</div>
+                    <ul class="admin-v-menu">
+                        <li>
+                            <a class="menu-item-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Home" && ViewContext.RouteData.Values["Action"]?.ToString() == "Privacy" ? "active" : "")" asp-controller="Home" asp-action="Privacy">
+                                <span><i class="bi bi-shield-lock-fill"></i> An Ninh Hệ Thống</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a href="#" data-bs-toggle="modal" data-bs-target="#settingsModal" class="menu-item-link">
+                                <span><i class="bi bi-sliders2-vertical"></i> Cấu Hình Thiết Lập</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                </div>
+            </div>
+
+            <div class="user-panel-footer">
+                <div class="d-flex align-items-center justify-content-between">
+                    <div class="d-flex align-items-center">
+                        <div class="bg-info text-dark rounded-3 d-flex align-items-center justify-content-center fw-bold shadow position-relative" style="width: 38px; height: 38px; font-size: 13px;">
+                            LMN
+                            <span class="position-absolute bottom-0 end-0 p-1 bg-success border border-white rounded-circle"></span>
                         </div>
-                        <a href="#" class="btn btn-primary rounded-pill px-4 btn-sm shadow-sm">
-                            <i class="bi bi-cart3 me-1"></i> Giỏ Hàng
-                        </a>
+                        <div class="ms-2">
+                            <h6 class="text-white mb-0 small fw-bold">Lê Minh Nhật</h6>
+                            <span style="font-size: 11px;" class="text-muted">Mã số: 2380601546</span>
+                        </div>
                     </div>
                 </div>
             </div>
-        </nav>
-    </header>
+        </aside>
 
-    <div class="container content-wrapper">
-        <main role="main" class="pb-5 pt-4 animate-fade-in">
-            @RenderBody()
-        </main>
+        <div class="admin-main-content">
+            
+            <header class="admin-topbar">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-light text-secondary border px-2.5 py-1.5 rounded-3 d-none d-md-inline-block font-12 fw-medium">
+                        <i class="bi bi-server me-1 text-success"></i> Laragon MySQL Connected
+                    </span>
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                    <button class="topbar-action-btn" onclick="toggleCartPanel()" title="Xem giỏ hàng nhanh">
+                        <i class="bi bi-bag-heart-fill text-danger"></i>
+                        <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-warning text-dark font-9 id-cart-badge">3</span>
+                    </button>
+
+                    <button class="topbar-action-btn" data-bs-toggle="modal" data-bs-target="#settingsModal" title="Cài đặt hệ thống">
+                        <i class="bi bi-gear-fill text-secondary"></i>
+                    </button>
+
+                    <button class="topbar-action-btn" id="dark-mode-toggle-btn" onclick="toggleDarkMode()" title="Bật/Tắt Chế độ ban đêm">
+                        <i class="bi bi-moon-stars-fill text-primary"></i>
+                    </button>
+                </div>
+            </header>
+
+            <main class="p-4 flex-grow-1 view-body-container">
+                @RenderBody()
+            </main>
+        </div>
     </div>
 
-    <footer class="custom-footer">
-        <div class="footer-bottom text-center py-3 border-top-smooth bg-light-gray">
-            <div class="container text-muted">
-                <small>&copy; @DateTime.Now.Year - <span class="fw-semibold">LeMinhNhat_WebBanHang</span>. Toàn bộ bản quyền được bảo lưu.</small>
+    <div class="cart-panel-overlay" id="cartOverlay" onclick="toggleCartPanel()"></div>
+    <div class="cart-slide-panel" id="cartSlidePanel">
+        <div class="p-3 bg-dark text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0 fw-bold font-15"><i class="bi bi-cart-check me-2 text-warning"></i> Giỏ Hàng Hệ Thống (Demo)</h5>
+            <button class="btn-close btn-close-white" onclick="toggleCartPanel()"></button>
+        </div>
+        <div class="p-3 flex-grow-1 overflow-y-auto" id="cart-items-list">
+            <div class="d-flex align-items-center gap-2 pb-3 mb-3 border-bottom font-13">
+                <div class="bg-light p-1 rounded border" style="width: 50px; height: 50px;">
+                    <i class="bi bi-laptop display-6 text-muted"></i>
+                </div>
+                <div class="flex-grow-1">
+                    <h6 class="mb-0 fw-bold font-12">Laptop Gaming ASUS Rog Strix</h6>
+                    <span class="text-danger fw-bold font-12">1,500.00 $</span> <span class="text-muted">x1</span>
+                </div>
             </div>
         </div>
-    </footer>
+        <div class="p-3 bg-light border-top">
+            <button class="btn btn-primary w-100 py-2 rounded-3 fw-bold font-13 shadow">
+                TIẾN HÀNH XUẤT HÓA ĐƠN
+            </button>
+        </div>
+    </div>
+
+    <div class="modal fade" id="settingsModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content border-0 shadow rounded-4">
+                <div class="modal-header bg-dark text-white rounded-top-4">
+                    <h5 class="modal-title fw-bold font-15"><i class="bi bi-sliders me-2 text-info"></i> Thiết Lập Cấu Hình Hệ Thống</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body p-4 font-13">
+                    <div class="mb-4">
+                        <label class="form-label fw-bold text-secondary text-uppercase font-11 mb-2">Tùy biến giao diện</label>
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" role="switch" id="settingDarkModeCheck" onchange="toggleDarkMode()">
+                            <label class="form-check-label" for="settingDarkModeCheck">Chế độ tối (Dark Mode Toàn Diện)</label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <script src="~/lib/jquery/dist/jquery.min.js"></script>
     <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
     <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script>
+        function toggleCartPanel() {
+            const panel = document.getElementById('cartSlidePanel');
+            const overlay = document.getElementById('cartOverlay');
+            panel.classList.toggle('open');
+            overlay.style.display = panel.classList.contains('open') ? 'block' : 'none';
+        }
+
+        function toggleDarkMode() {
+            const body = document.body;
+            body.classList.toggle('dark-theme-active');
+            const isDark = body.classList.contains('dark-theme-active');
+            document.getElementById('settingDarkModeCheck').checked = isDark;
+        }
+    </script>
+
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>
