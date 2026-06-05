@@ -1,0 +1,15 @@
+@page
+@model LogoutModel
+@{
+    ViewData["Title"] = "Đăng xuất";
+}
+
+<div class="container py-5 text-center">
+    <div class="card border-0 shadow-lg rounded-4 p-5 d-inline-block">
+        <h3 class="fw-bold mb-3">Đang xử lý đăng xuất...</h3>
+        <p class="text-muted">Bạn đang được chuyển hướng về trang chủ.</p>
+        <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Product", new { area = "" })" method="post">
+            <button type="submit" class="btn btn-primary px-4 py-2 mt-2">Xác nhận đăng xuất</button>
+        </form>
+    </div>
+</div>

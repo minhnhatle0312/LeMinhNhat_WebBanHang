@@ -1,0 +1,75 @@
+@model IEnumerable<LeMinhNhat_WebBanHang.Models.Product>
+@{
+    ViewData["Title"] = "Quản Lý Sản Phẩm";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold mb-0 text-dark"><i class="bi bi-box-seam me-2 text-warning"></i>Quản Lý Sản Phẩm</h3>
+    <a asp-action="Add" class="btn btn-warning fw-bold shadow-sm px-4 py-2">
+        <i class="bi bi-plus-circle-fill me-2"></i>Thêm Sản Phẩm Mới
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr class="small text-secondary">
+                    <th>Ảnh</th>
+                    <th>Tên Sản Phẩm</th>
+                    <th>Giá Bán</th>
+                    <th>Danh Mục (ID)</th>
+                    <th class="text-end">Hành Động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td>
+                                @if (!string.IsNullOrEmpty(item.ImageUrl))
+                                {
+                                    <img src="@item.ImageUrl" alt="@item.Name" class="rounded border p-1" style="width: 50px; height: 50px; object-fit: contain;" />
+                                }
+                                else
+                                {
+                                    <div class="bg-light border rounded text-muted d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                                        <i class="bi bi-image font-20"></i>
+                                    </div>
+                                }
+                            </td>
+                            <td>
+                                <h6 class="fw-bold mb-0 text-dark font-13">@item.Name</h6>
+                                <span class="text-muted small">ID: #@item.Id</span>
+                            </td>
+                            <td class="fw-bold text-danger">@item.Price.ToString("N2") $</td>
+                            <td>
+                                <span class="badge bg-light text-dark border font-11">Danh mục: @item.CategoryId</span>
+                            </td>
+                            <td class="text-end">
+                                <div class="d-inline-flex gap-2">
+                                    <a asp-action="Update" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info" title="Sửa">
+                                        <i class="bi bi-pencil-square"></i> Sửa
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger" title="Xóa">
+                                        <i class="bi bi-trash3-fill"></i> Xóa
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="5" class="text-center py-5 text-muted">
+                            Không có sản phẩm nào trong cơ sở dữ liệu.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

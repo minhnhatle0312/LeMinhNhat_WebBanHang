@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - Nhật TechStore Admin</title>
+    <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css" />
+    <link rel="stylesheet" href="~/css/site.css" asp-append-version="true" />
+    <link rel="stylesheet" href="~/LeMinhNhat_WebBanHang.styles.css" asp-append-version="true" />
+
+    <style>
+        :root {
+            --sidebar-width: 280px;
+            --primary-gradient: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+            --accent-gradient: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+            --dark-bg: #0b0f19;
+            --card-dark: #1e293b;
+        }
+
+        body {
+            background-color: #f4f6f9;
+            font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+            overflow-x: hidden;
+        }
+
+        .admin-wrapper {
+            display: flex;
+            min-height: 100vh;
+        }
+
+        .admin-sidebar {
+            width: var(--sidebar-width);
+            background: #0f172a;
+            box-shadow: 4px 0 25px rgba(15, 23, 42, 0.15);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0; bottom: 0; left: 0;
+            z-index: 1040;
+        }
+
+        .sidebar-brand-box {
+            background: rgba(255, 255, 255, 0.03);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .menu-sections-wrapper {
+            flex: 1;
+            overflow-y: auto;
+            padding: 1.25rem 0.75rem;
+        }
+
+        .menu-group-title {
+            font-size: 10px;
+            text-transform: uppercase;
+            letter-spacing: 0.12em;
+            color: #64748b;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            padding-left: 0.75rem;
+        }
+
+        .admin-v-menu {
+            list-style: none;
+            padding: 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .menu-item-link {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem 1rem;
+            color: #94a3b8;
+            text-decoration: none;
+            font-size: 13.5px;
+            font-weight: 600;
+            border-radius: 12px;
+            transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+            margin-bottom: 0.25rem;
+        }
+
+        .menu-item-link i:first-child {
+            font-size: 16px;
+            margin-right: 12px;
+        }
+
+        .menu-item-link:hover {
+            color: #fff;
+            background: rgba(255, 255, 255, 0.05);
+            padding-left: 1.25rem;
+        }
+
+        .menu-item-link.active {
+            background: var(--accent-gradient);
+            color: #fff !important;
+            box-shadow: 0 4px 15px rgba(245, 158, 11, 0.3);
+        }
+
+        .admin-main-content {
+            margin-left: var(--sidebar-width);
+            flex: 1;
+            min-width: 0;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .admin-topbar {
+            height: 70px;
+            background: #fff;
+            border-bottom: 1px solid #e2e8f0;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 1.5rem;
+            position: sticky; top: 0; z-index: 1020;
+        }
+
+        .topbar-action-btn {
+            width: 40px; height: 40px;
+            display: inline-flex; align-items: center; justify-content: center;
+            border-radius: 10px; background: #f1f5f9; color: #475569;
+            border: none; position: relative; transition: all 0.2s;
+            text-decoration: none;
+        }
+        .topbar-action-btn:hover {
+            background: #e2e8f0; color: #0f172a; transform: translateY(-1px);
+        }
+
+        .user-panel-footer {
+            background: rgba(0, 0, 0, 0.2);
+            border-top: 1px solid rgba(255, 255, 255, 0.05);
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="admin-wrapper">
+        <aside class="admin-sidebar d-flex flex-column justify-content-between">
+            <div class="d-flex flex-column h-100">
+                <div class="sidebar-brand-box py-3 px-4 d-flex align-items-center justify-content-between">
+                    <a class="text-decoration-none d-flex align-items-center" asp-area="" asp-controller="Product" asp-action="Index">
+                        <div class="bg-warning bg-opacity-25 p-2 rounded-3 me-2 text-warning">
+                            <i class="bi bi-shield-lock-fill fs-4 animate__animated animate__pulse animate__infinite"></i>
+                        </div>
+                        <span class="text-white fw-bold tracking-wide">TechStore <span class="text-warning fw-bold">Admin</span></span>
+                    </a>
+                </div>
+
+                <div class="menu-sections-wrapper">
+                    <div class="menu-group-title">Bản điều khiển</div>
+                    <ul class="admin-v-menu">
+                        <li>
+                            <a class="menu-item-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "ProductManager" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")" asp-area="Admin" asp-controller="ProductManager" asp-action="Index">
+                                <span><i class="bi bi-box-seam-fill"></i> Quản Lý Sản Phẩm</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="menu-item-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "CategoryManager" ? "active" : "")" asp-area="Admin" asp-controller="CategoryManager" asp-action="Index">
+                                <span><i class="bi bi-tags-fill"></i> Quản Lý Danh Mục</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="menu-item-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "OrderManager" ? "active" : "")" asp-area="Admin" asp-controller="OrderManager" asp-action="Index">
+                                <span><i class="bi bi-receipt-cutoff"></i> Quản Lý Đơn Hàng</span>
+                            </a>
+                        </li>
+                        <li>
+                            <a class="menu-item-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "UserManager" ? "active" : "")" asp-area="Admin" asp-controller="UserManager" asp-action="Index">
+                                <span><i class="bi bi-people-fill"></i> Quản Lý Người Dùng</span>
+                            </a>
+                        </li>
+                    </ul>
+
+                    <div class="menu-group-title">Khác</div>
+                    <ul class="admin-v-menu">
+                        <li>
+                            <a class="menu-item-link" asp-area="" asp-controller="Product" asp-action="Index">
+                                <span><i class="bi bi-shop"></i> Quay Về Cửa Hàng</span>
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="user-panel-footer">
+                <div class="d-flex align-items-center">
+                    <div class="bg-warning text-dark rounded-3 d-flex align-items-center justify-content-center fw-bold shadow" style="width: 38px; height: 38px; font-size: 13px;">
+                        AD
+                    </div>
+                    <div class="ms-2">
+                        <h6 class="text-white mb-0 small fw-bold">Admin Console</h6>
+                        <span style="font-size: 11px;" class="text-muted">Quyền: Quản trị viên</span>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <div class="admin-main-content">
+            <header class="admin-topbar">
+                <div class="d-flex align-items-center gap-2">
+                    <span class="badge bg-light text-secondary border px-3 py-2 rounded-3 fw-medium">
+                        <i class="bi bi-database-fill-check me-1 text-success"></i> SQL Server Connected
+                    </span>
+                </div>
+
+                <div class="d-flex align-items-center gap-2">
+                    <a class="topbar-action-btn" asp-area="" asp-controller="Product" asp-action="Index" title="Về trang chủ">
+                        <i class="bi bi-house-door-fill text-primary"></i>
+                    </a>
+                    <partial name="_LoginPartial" />
+                </div>
+            </header>
+
+            <main class="p-4 flex-grow-1 animate__animated animate__fadeIn">
+                @RenderBody()
+            </main>
+        </div>
+    </div>
+
+    <script src="~/lib/jquery/dist/jquery.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+    @await RenderSectionAsync("Scripts", required: false)
+</body>
+</html>

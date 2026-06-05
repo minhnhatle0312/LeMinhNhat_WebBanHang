@@ -1,8 +1,11 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity.EntityFrameworkCore;
+using LeMinhNhat_WebBanHang.Models;
 
-namespace LeMinhNhat_WebBanHang.Models
+namespace LeMinhNhat_WebBanHang.DataAccess // Khuyên dùng .DataAccess để đồng bộ kiến trúc dự án
 {
-    public class ApplicationDbContext : DbContext
+    // CẢI TIẾN CHÍNH: Kế thừa IdentityDbContext<ApplicationUser> thay vì DbContext thuần túy
+    public class ApplicationDbContext : IdentityDbContext<ApplicationUser>
     {
         // Hàm khởi tạo (Constructor) nhận DbContextOptions để cấu hình chuỗi kết nối từ Program.cs
         public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options)
@@ -16,9 +19,15 @@ namespace LeMinhNhat_WebBanHang.Models
         // Định nghĩa tập hợp thực thể (Bảng) Danh mục ngành hàng
         public DbSet<Category> Categories { get; set; }
 
+        // Định nghĩa các thực thể đơn hàng
+        public DbSet<Order> Orders { get; set; }
+        public DbSet<OrderDetail> OrderDetails { get; set; }
+
         // Cấu hình Fluent API (Tùy biến bảng, thiết lập ràng buộc và tạo dữ liệu mẫu nếu cần)
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            // LƯU Ý QUAN TRỌNG: Phải gọi base.OnModelCreating(modelBuilder) đầu tiên
+            // để Identity khởi tạo thành công các cấu trúc cấu hình bảng bảo mật mặc định.
             base.OnModelCreating(modelBuilder);
 
             // 1. Cấu hình bảng Products
@@ -69,6 +78,32 @@ namespace LeMinhNhat_WebBanHang.Models
                     ImageUrl = "/images/sample-laptop.png"
                 }
             );
+
+            // 4. Cấu hình bảng Orders
+            modelBuilder.Entity<Order>(entity =>
+            {
+                entity.ToTable("Orders");
+                entity.HasKey(o => o.Id);
+                entity.HasOne(o => o.User)
+                    .WithMany()
+                    .HasForeignKey(o => o.UserId)
+                    .OnDelete(DeleteBehavior.Cascade);
+            });
+
+            // 5. Cấu hình bảng OrderDetails
+            modelBuilder.Entity<OrderDetail>(entity =>
+            {
+                entity.ToTable("OrderDetails");
+                entity.HasKey(od => od.Id);
+                entity.HasOne(od => od.Order)
+                    .WithMany(o => o.OrderDetails)
+                    .HasForeignKey(od => od.OrderId)
+                    .OnDelete(DeleteBehavior.Cascade);
+                entity.HasOne(od => od.Product)
+                    .WithMany()
+                    .HasForeignKey(od => od.ProductId)
+                    .OnDelete(DeleteBehavior.Restrict);
+            });
         }
     }
 }

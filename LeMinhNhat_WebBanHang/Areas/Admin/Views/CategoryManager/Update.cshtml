@@ -1,0 +1,36 @@
+@model LeMinhNhat_WebBanHang.Models.Category
+@{
+    ViewData["Title"] = "Cập Nhật Danh Mục";
+}
+
+<div class="mb-4">
+    <a asp-action="Index" class="btn btn-sm btn-outline-secondary px-3 rounded-pill mb-3">
+        <i class="bi bi-arrow-left me-1"></i> Quay về danh sách
+    </a>
+    <h3 class="fw-bold text-dark"><i class="bi bi-pencil-square me-2 text-warning"></i>Cập Nhật Danh Mục</h3>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-12 col-lg-6">
+        <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white animate__animated animate__fadeIn">
+            <form asp-action="Update" method="post">
+                <input type="hidden" asp-for="Id" />
+                <div asp-validation-summary="ModelOnly" class="text-danger small mb-3"></div>
+
+                <div class="mb-4">
+                    <label asp-for="Name" class="form-label fw-semibold small text-secondary">Tên danh mục / Ngành hàng</label>
+                    <input asp-for="Name" class="form-control py-2.5 rounded-3" placeholder="Nhập tên mới cho danh mục..." />
+                    <span asp-validation-for="Name" class="text-danger small"></span>
+                </div>
+
+                <button type="submit" class="btn btn-warning w-100 py-3 rounded-3 fw-bold shadow-sm">
+                    LƯU THAY ĐỔI DANH MỤC
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

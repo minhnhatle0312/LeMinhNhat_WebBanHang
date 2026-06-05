@@ -1,0 +1,402 @@
+@{
+    ViewData["Title"] = "Flash Sale - Phòng Chờ";
+    var saleEndIso = ViewBag.SaleEndTime as string ?? "";
+}
+
+<style>
+    body { background-color: #020817 !important; overflow-x: hidden; }
+
+    .queue-hero {
+        min-height: 100vh;
+        background: radial-gradient(ellipse at 20% 50%, rgba(239,68,68,0.15) 0%, transparent 60%),
+                    radial-gradient(ellipse at 80% 50%, rgba(245,158,11,0.12) 0%, transparent 60%),
+                    #020817;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        text-align: center;
+        padding: 2rem;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .queue-hero::before {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23ef4444' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+        opacity: 0.5;
+    }
+
+    /* Animated particles */
+    .particle {
+        position: absolute;
+        border-radius: 50%;
+        animation: float-up linear infinite;
+        pointer-events: none;
+    }
+
+    @@keyframes float-up {
+        0% { transform: translateY(100vh) scale(0); opacity: 0; }
+        10% { opacity: 1; }
+        90% { opacity: 1; }
+        100% { transform: translateY(-20vh) scale(1); opacity: 0; }
+    }
+
+    .lightning-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: linear-gradient(135deg, #ef4444, #f97316);
+        color: white;
+        padding: 6px 20px;
+        border-radius: 50px;
+        font-size: 0.75rem;
+        font-weight: 800;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        box-shadow: 0 0 25px rgba(239,68,68,0.5);
+        animation: pulse-glow 2s ease-in-out infinite;
+    }
+
+    @@keyframes pulse-glow {
+        0%, 100% { box-shadow: 0 0 20px rgba(239,68,68,0.4); }
+        50% { box-shadow: 0 0 45px rgba(239,68,68,0.8), 0 0 70px rgba(239,68,68,0.3); }
+    }
+
+    .queue-title {
+        font-family: 'Outfit', sans-serif;
+        font-size: clamp(2.5rem, 8vw, 5rem);
+        font-weight: 900;
+        background: linear-gradient(135deg, #fbbf24 0%, #ef4444 40%, #ec4899 100%);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        line-height: 1.1;
+        margin: 1rem 0;
+        text-shadow: none;
+    }
+
+    .queue-subtitle {
+        color: #94a3b8;
+        font-size: 1.1rem;
+        max-width: 520px;
+        line-height: 1.6;
+    }
+
+    /* Countdown Timer */
+    .countdown-wrapper {
+        display: flex;
+        gap: 1rem;
+        justify-content: center;
+        margin: 2.5rem 0;
+        flex-wrap: wrap;
+    }
+
+    .countdown-box {
+        background: rgba(255,255,255,0.04);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 16px;
+        padding: 1.5rem 2rem;
+        min-width: 90px;
+        position: relative;
+        overflow: hidden;
+        transition: border-color 0.3s;
+    }
+
+    .countdown-box.urgent {
+        border-color: rgba(239,68,68,0.4);
+        background: rgba(239,68,68,0.06);
+    }
+
+    .countdown-box::before {
+        content: '';
+        position: absolute;
+        top: 0; left: 0; right: 0;
+        height: 2px;
+        background: linear-gradient(90deg, transparent, #ef4444, transparent);
+    }
+
+    .countdown-number {
+        font-family: 'Outfit', sans-serif;
+        font-size: 3rem;
+        font-weight: 900;
+        color: #fff;
+        display: block;
+        line-height: 1;
+    }
+
+    .countdown-label {
+        font-size: 0.65rem;
+        font-weight: 700;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+        color: #64748b;
+        display: block;
+        margin-top: 4px;
+    }
+
+    /* Security progress bar */
+    .security-bar-wrapper {
+        background: rgba(255,255,255,0.05);
+        border: 1px solid rgba(255,255,255,0.08);
+        border-radius: 16px;
+        padding: 1.5rem 2rem;
+        max-width: 500px;
+        width: 100%;
+        margin: 0 auto 2rem;
+        text-align: left;
+    }
+
+    .security-step {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 12px;
+        font-size: 0.85rem;
+        color: #64748b;
+        transition: color 0.4s;
+    }
+
+    .security-step.done { color: #22c55e; }
+    .security-step.active { color: #fbbf24; }
+
+    .security-step-icon {
+        width: 28px; height: 28px;
+        border-radius: 50%;
+        background: rgba(255,255,255,0.05);
+        display: flex; align-items: center; justify-content: center;
+        font-size: 0.8rem;
+        flex-shrink: 0;
+        transition: background 0.4s;
+    }
+
+    .security-step.done .security-step-icon { background: rgba(34,197,94,0.2); color: #22c55e; }
+    .security-step.active .security-step-icon { background: rgba(251,191,36,0.2); color: #fbbf24; }
+
+    .security-progress {
+        height: 4px;
+        background: rgba(255,255,255,0.07);
+        border-radius: 2px;
+        overflow: hidden;
+        margin-bottom: 1rem;
+    }
+
+    .security-progress-fill {
+        height: 100%;
+        border-radius: 2px;
+        background: linear-gradient(90deg, #22c55e, #fbbf24, #ef4444);
+        transition: width 0.8s ease;
+    }
+
+    .enter-btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        background: linear-gradient(135deg, #ef4444, #dc2626);
+        color: white;
+        border: none;
+        padding: 1rem 3rem;
+        border-radius: 50px;
+        font-size: 1.1rem;
+        font-weight: 800;
+        cursor: pointer;
+        box-shadow: 0 10px 30px rgba(239,68,68,0.4);
+        transition: all 0.3s;
+        text-decoration: none;
+        letter-spacing: 0.03em;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .enter-btn:hover {
+        transform: translateY(-3px) scale(1.02);
+        box-shadow: 0 20px 45px rgba(239,68,68,0.5);
+        color: white;
+    }
+
+    .enter-btn::after {
+        content: '';
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(135deg, rgba(255,255,255,0.15), transparent);
+    }
+
+    .enter-btn:disabled {
+        background: rgba(255,255,255,0.1);
+        box-shadow: none;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    .queue-count-text {
+        color: #64748b;
+        font-size: 0.9rem;
+    }
+
+    .live-dot {
+        width: 8px; height: 8px;
+        background: #22c55e;
+        border-radius: 50%;
+        display: inline-block;
+        animation: blink 1s ease-in-out infinite;
+        margin-right: 4px;
+    }
+
+    @@keyframes blink {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.2; }
+    }
+</style>
+
+<div class="queue-hero">
+    <!-- Floating particles -->
+    <div class="particle" style="left:5%;width:6px;height:6px;background:#ef444450;animation-duration:8s;animation-delay:0s;"></div>
+    <div class="particle" style="left:15%;width:4px;height:4px;background:#fbbf2450;animation-duration:11s;animation-delay:2s;"></div>
+    <div class="particle" style="left:30%;width:8px;height:8px;background:#ec489950;animation-duration:9s;animation-delay:1s;"></div>
+    <div class="particle" style="left:50%;width:5px;height:5px;background:#ef444450;animation-duration:12s;animation-delay:3s;"></div>
+    <div class="particle" style="left:65%;width:7px;height:7px;background:#f9731650;animation-duration:10s;animation-delay:0.5s;"></div>
+    <div class="particle" style="left:80%;width:4px;height:4px;background:#fbbf2450;animation-duration:7s;animation-delay:4s;"></div>
+    <div class="particle" style="left:92%;width:6px;height:6px;background:#ec489950;animation-duration:13s;animation-delay:1.5s;"></div>
+
+    <div class="position-relative z-1" style="max-width: 700px; width: 100%;">
+        <span class="lightning-badge mb-3 d-inline-flex">
+            <i class="bi bi-lightning-charge-fill"></i>
+            FLASH SALE EVENT
+        </span>
+
+        <h1 class="queue-title animate__animated animate__fadeInDown">
+            GIÁ HỜI<br>THEO GIỜ
+        </h1>
+
+        <p class="queue-subtitle mb-4 mx-auto animate__animated animate__fadeIn animate__delay-1s">
+            Bạn đang trong phòng chờ bảo mật. Hệ thống sẽ xác minh danh tính và mở cổng vào khu mua sắm Flash Sale trong giây lát.
+        </p>
+
+        <!-- Security verification widget -->
+        <div class="security-bar-wrapper animate__animated animate__fadeInUp animate__delay-1s">
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="text-white fw-bold small">XÁC THỰC BẢO MẬT</span>
+                <span class="text-muted small" id="security-percent">0%</span>
+            </div>
+            <div class="security-progress mb-3">
+                <div class="security-progress-fill" id="security-bar" style="width: 0%;"></div>
+            </div>
+
+            <div class="security-step" id="step-1">
+                <div class="security-step-icon"><i class="bi bi-wifi"></i></div>
+                <span>Kiểm tra kết nối mạng</span>
+            </div>
+            <div class="security-step" id="step-2">
+                <div class="security-step-icon"><i class="bi bi-shield-check"></i></div>
+                <span>Xác minh thiết bị truy cập</span>
+            </div>
+            <div class="security-step" id="step-3">
+                <div class="security-step-icon"><i class="bi bi-person-check"></i></div>
+                <span>Xác thực tài khoản người dùng</span>
+            </div>
+            <div class="security-step" id="step-4">
+                <div class="security-step-icon"><i class="bi bi-unlock"></i></div>
+                <span>Mở khóa phòng Flash Sale</span>
+            </div>
+        </div>
+
+        <!-- Countdown -->
+        <div class="mb-3">
+            <p class="text-muted small mb-2 text-uppercase fw-bold" style="letter-spacing:0.1em;">⏱️ Flash Sale kết thúc sau</p>
+            <div class="countdown-wrapper">
+                <div class="countdown-box" id="cd-hours">
+                    <span class="countdown-number" id="cd-h">00</span>
+                    <span class="countdown-label">Giờ</span>
+                </div>
+                <div class="countdown-box" id="cd-minutes">
+                    <span class="countdown-number" id="cd-m">00</span>
+                    <span class="countdown-label">Phút</span>
+                </div>
+                <div class="countdown-box" id="cd-seconds">
+                    <span class="countdown-number" id="cd-s">00</span>
+                    <span class="countdown-label">Giây</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Queue info -->
+        <div class="queue-count-text mb-4">
+            <span class="live-dot"></span>
+            <span id="queue-people">1,247</span> người đang chờ cùng bạn
+        </div>
+
+        <!-- Enter button -->
+        <a id="enter-btn" href="/FlashSale/Sale" class="enter-btn" style="display:none;">
+            <i class="bi bi-lightning-charge-fill"></i>
+            VÀO FLASH SALE NGAY!
+        </a>
+        <button id="wait-btn" class="enter-btn" disabled>
+            <span class="spinner-border spinner-border-sm me-2" role="status"></span>
+            Đang xác thực...
+        </button>
+    </div>
+</div>
+
+@section Scripts {
+<script>
+    // Sale end time from server
+    var saleEndTime = new Date('@Html.Raw(saleEndIso)');
+
+    // Update countdown
+    function updateCountdown() {
+        var now = new Date();
+        var diff = Math.max(0, Math.floor((saleEndTime - now) / 1000));
+        var h = Math.floor(diff / 3600);
+        var m = Math.floor((diff % 3600) / 60);
+        var s = diff % 60;
+        document.getElementById('cd-h').textContent = String(h).padStart(2,'0');
+        document.getElementById('cd-m').textContent = String(m).padStart(2,'0');
+        document.getElementById('cd-s').textContent = String(s).padStart(2,'0');
+
+        if (s < 10 && m === 0 && h === 0) {
+            document.getElementById('cd-seconds').classList.add('urgent');
+        }
+    }
+
+    setInterval(updateCountdown, 1000);
+    updateCountdown();
+
+    // Animated queue count
+    setInterval(function() {
+        var base = 1247;
+        var fluctuation = Math.floor(Math.random() * 40) - 20;
+        document.getElementById('queue-people').textContent = (base + fluctuation).toLocaleString('vi-VN');
+    }, 3000);
+
+    // Security verification sequence
+    var steps = ['step-1', 'step-2', 'step-3', 'step-4'];
+    var stepDelays = [1000, 2500, 4200, 6000];
+    var percents = [25, 50, 75, 100];
+    var labels = ['Đang kiểm tra...', 'Đang xác minh...', 'Đang xác thực...', 'Hoàn tất!'];
+
+    steps.forEach(function(id, idx) {
+        // Activate step
+        setTimeout(function() {
+            document.getElementById(id).classList.add('active');
+            document.getElementById('security-bar').style.width = percents[idx] + '%';
+            document.getElementById('security-percent').textContent = percents[idx] + '%';
+        }, stepDelays[idx]);
+
+        // Complete step (500ms later)
+        setTimeout(function() {
+            document.getElementById(id).classList.remove('active');
+            document.getElementById(id).classList.add('done');
+            document.getElementById(id).querySelector('.security-step-icon').innerHTML = '<i class="bi bi-check-lg"></i>';
+        }, stepDelays[idx] + 700);
+    });
+
+    // After all steps: show the enter button
+    setTimeout(function() {
+        document.getElementById('wait-btn').style.display = 'none';
+        var enterBtn = document.getElementById('enter-btn');
+        enterBtn.style.display = 'inline-flex';
+        enterBtn.classList.add('animate__animated', 'animate__bounceIn');
+    }, 7200);
+</script>
+}

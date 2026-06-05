@@ -1,0 +1,60 @@
+@using Microsoft.AspNetCore.Identity
+@using LeMinhNhat_WebBanHang.Models
+@inject SignInManager<ApplicationUser> SignInManager
+@inject UserManager<ApplicationUser> UserManager
+
+<ul class="navbar-nav align-items-center gap-2">
+@if (SignInManager.IsSignedIn(User))
+{
+    var currentUser = await UserManager.GetUserAsync(User);
+    
+    <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle d-flex align-items-center gap-2 text-dark font-13 fw-semibold" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+            @if (currentUser != null && !string.IsNullOrEmpty(currentUser.ProfilePictureUrl))
+            {
+                <img src="@currentUser.ProfilePictureUrl" class="rounded-circle" style="width: 32px; height: 32px; object-fit: cover; border: 1.5px solid var(--primary-color);" />
+            }
+            else
+            {
+                <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold" style="width: 32px; height: 32px; font-size: 11px;">
+                    @(currentUser?.FullName?.Substring(0, Math.Min(currentUser.FullName.Length, 2)).ToUpper() ?? "US")
+                </div>
+            }
+            <span class="d-none d-md-inline">Chào, @(currentUser?.FullName ?? User.Identity?.Name)</span>
+        </a>
+        <ul class="dropdown-menu dropdown-menu-end shadow border-0 rounded-3 mt-2 font-13" aria-labelledby="userDropdown">
+            <li>
+                <a class="dropdown-item py-2" asp-area="" asp-controller="Profile" asp-action="Index">
+                    <i class="bi bi-person-circle me-2 text-primary"></i> Hồ sơ cá nhân
+                </a>
+            </li>
+            @if (User.IsInRole(SD.Role_Admin))
+            {
+                <li>
+                    <a class="dropdown-item py-2" asp-area="Admin" asp-controller="ProductManager" asp-action="Index">
+                        <i class="bi bi-shield-lock-fill me-2 text-warning"></i> Quản trị hệ thống
+                    </a>
+                </li>
+            }
+            <li><hr class="dropdown-divider"></li>
+            <li>
+                <form class="form-inline" asp-area="Identity" asp-page="/Account/Logout" asp-route-returnUrl="@Url.Action("Index", "Product", new { area = "" })" method="post">
+                    <button type="submit" class="dropdown-item text-danger py-2 w-100 style-none">
+                        <i class="bi bi-box-arrow-right me-2"></i> Đăng xuất
+                    </button>
+                </form>
+            </li>
+        </ul>
+    </li>
+}
+else
+{
+    <li class="nav-item">
+        <a class="btn btn-light btn-sm text-secondary border px-3 rounded-pill font-13 fw-medium" asp-area="Identity" asp-page="/Account/Register">Đăng ký</a>
+    </li>
+    <li class="nav-item">
+        <a class="btn btn-primary btn-sm px-3 rounded-pill font-13 fw-semibold text-white" asp-area="Identity" asp-page="/Account/Login">Đăng nhập</a>
+    </li>
+}
+</ul>
+

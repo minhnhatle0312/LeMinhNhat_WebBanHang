@@ -1,4 +1,4 @@
-﻿@model LeMinhNhat_WebBanHang.Models.Product
+@model LeMinhNhat_WebBanHang.Models.Product
 
 @{
     ViewData["Title"] = "Chi Tiết Sản Phẩm - " + Model.Name;
@@ -9,11 +9,14 @@
         <a asp-action="Index" class="btn btn-white border btn-sm px-3 rounded-2 text-muted fw-medium shadow-xs">
             <i class="bi bi-arrow-left me-1"></i> Trở về kho hàng
         </a>
-        <div class="d-flex gap-2">
-            <a asp-action="Update" asp-route-id="@Model.Id" class="btn btn-info btn-sm text-white px-3 rounded-2 fw-medium shadow-xs">
-                <i class="bi bi-pencil-square me-1"></i> Sửa thông tin
-            </a>
-        </div>
+        @if (User.IsInRole("Admin"))
+        {
+            <div class="d-flex gap-2">
+                <a asp-area="Admin" asp-controller="ProductManager" asp-action="Update" asp-route-id="@Model.Id" class="btn btn-info btn-sm text-white px-3 rounded-2 fw-medium shadow-xs">
+                    <i class="bi bi-pencil-square me-1"></i> Sửa thông tin
+                </a>
+            </div>
+        }
     </div>
 
     <div class="card shadow-sm border-0 rounded-4 overflow-hidden bg-white">
@@ -67,6 +70,17 @@
                         <div class="p-3 bg-light rounded-3 d-flex align-items-baseline mb-4 shadow-inner" style="background: linear-gradient(145deg, #f8fafc, #f1f5f9);">
                             <span class="text-muted small me-3 fw-medium">Giá Niêm Yết Kho:</span>
                             <span class="fs-2 fw-bold text-danger">@Model.Price.ToString("N2") <span class="fs-5 fw-normal">$</span></span>
+                        </div>
+
+                        <div class="mb-4 d-flex align-items-center gap-3">
+                            <div class="input-group" style="width: 120px;">
+                                <button class="btn btn-outline-secondary px-2.5 py-2" onclick="changeDisplayQty(-1)"><i class="bi bi-minus"></i></button>
+                                <input type="text" id="display-quantity" class="form-control text-center bg-white fw-bold py-2" value="1" readonly style="max-width: 50px;" />
+                                <button class="btn btn-outline-secondary px-2.5 py-2" onclick="changeDisplayQty(1)"><i class="bi bi-plus"></i></button>
+                            </div>
+                            <button onclick="addToCart(@Model.Id, parseInt($('#display-quantity').val()))" class="btn btn-primary px-4 py-2.5 rounded-3 fw-bold shadow">
+                                <i class="bi bi-cart-plus-fill me-2"></i>THÊM VÀO GIỎ HÀNG
+                            </button>
                         </div>
 
                         <div class="mb-4">
@@ -183,7 +197,14 @@
             });
 
             // Kích hoạt viền xanh cho thẻ vừa chọn
-            clickedElement.classList.add('active-thumb');
+        }
+
+        function changeDisplayQty(val) {
+            var $input = $('#display-quantity');
+            var newVal = parseInt($input.val()) + val;
+            if (newVal > 0 && newVal <= 100) {
+                $input.val(newVal);
+            }
         }
     </script>
 }

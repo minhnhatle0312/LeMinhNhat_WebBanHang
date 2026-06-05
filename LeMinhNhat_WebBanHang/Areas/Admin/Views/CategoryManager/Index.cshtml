@@ -1,0 +1,55 @@
+@model IEnumerable<LeMinhNhat_WebBanHang.Models.Category>
+@{
+    ViewData["Title"] = "Quản Lý Danh Mục Ngành Hàng";
+}
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold mb-0 text-dark"><i class="bi bi-tags me-2 text-warning"></i>Quản Lý Danh Mục</h3>
+    <a asp-action="Add" class="btn btn-warning fw-bold shadow-sm px-4 py-2">
+        <i class="bi bi-plus-circle-fill me-2"></i>Thêm Danh Mục Mới
+    </a>
+</div>
+
+<div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+    <div class="table-responsive">
+        <table class="table table-hover align-middle">
+            <thead class="table-light">
+                <tr class="small text-secondary">
+                    <th style="width: 150px;">Mã Danh Mục</th>
+                    <th>Tên Ngành Hàng / Danh Mục</th>
+                    <th class="text-end" style="width: 200px;">Hành Động</th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model != null && Model.Any())
+                {
+                    foreach (var item in Model)
+                    {
+                        <tr>
+                            <td class="fw-bold">#@item.Id</td>
+                            <td class="fw-bold text-dark font-13">@item.Name</td>
+                            <td class="text-end">
+                                <div class="d-inline-flex gap-2">
+                                    <a asp-action="Update" asp-route-id="@item.Id" class="btn btn-sm btn-outline-info">
+                                        <i class="bi bi-pencil-square"></i> Sửa
+                                    </a>
+                                    <a asp-action="Delete" asp-route-id="@item.Id" class="btn btn-sm btn-outline-danger">
+                                        <i class="bi bi-trash3-fill"></i> Xóa
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                }
+                else
+                {
+                    <tr>
+                        <td colspan="3" class="text-center py-5 text-muted">
+                            Không có danh mục nào trong cơ sở dữ liệu.
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+</div>

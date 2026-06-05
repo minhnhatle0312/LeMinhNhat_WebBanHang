@@ -1,0 +1,141 @@
+@model LeMinhNhat_WebBanHang.Models.ApplicationUser
+@{
+    ViewData["Title"] = "Hồ Sơ Cá Nhân";
+    var orders = ViewBag.Orders as List<LeMinhNhat_WebBanHang.Models.Order> ?? new List<LeMinhNhat_WebBanHang.Models.Order>();
+}
+
+<div class="container py-5">
+    <!-- Success/Error Toast Message Alerts -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm mb-4" role="alert">
+            <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="alert alert-danger alert-dismissible fade show rounded-3 shadow-sm mb-4" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
+
+    <div class="row g-4">
+        <!-- Sidebar Account Card -->
+        <div class="col-12 col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 text-center p-4 bg-white">
+                <div class="position-relative d-inline-block mx-auto mb-3">
+                    @if (!string.IsNullOrEmpty(Model.ProfilePictureUrl))
+                    {
+                        <img src="@Model.ProfilePictureUrl" alt="@Model.FullName" class="rounded-circle border border-4 border-primary" style="width: 120px; height: 120px; object-fit: cover;" />
+                    }
+                    else
+                    {
+                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold border border-4 border-light mx-auto" style="width: 120px; height: 120px; font-size: 36px;">
+                            @(Model.FullName?.Substring(0, Math.Min(Model.FullName.Length, 2)).ToUpper() ?? "US")
+                        </div>
+                    }
+                </div>
+                <h4 class="fw-bold mb-1">@Model.FullName</h4>
+                <p class="text-muted small mb-3">@Model.Email</p>
+                <div class="badge bg-light text-primary border px-3 py-2 rounded-pill mb-2 small fw-semibold">
+                    <i class="bi bi-calendar3 me-1"></i>Thành viên từ: @Model.AccountCreatedAt.ToString("dd/MM/yyyy")
+                </div>
+            </div>
+        </div>
+
+        <!-- Detail Information & Order History -->
+        <div class="col-12 col-lg-8">
+            <div class="card border-0 shadow-sm rounded-4 bg-white p-4 p-md-5 mb-4">
+                <h5 class="fw-bold mb-4 border-bottom pb-2 text-dark"><i class="bi bi-gear-fill me-2 text-primary"></i>Cấu Hình Thông Tin Cá Nhân</h5>
+
+                <form asp-action="Update" method="post" enctype="multipart/form-data">
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-secondary">Họ và tên</label>
+                            <input name="fullName" type="text" class="form-control py-2.5 rounded-3" value="@Model.FullName" required />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label fw-semibold small text-secondary">Tuổi của bạn</label>
+                            <input name="age" type="number" class="form-control py-2.5 rounded-3" value="@Model.Age" min="1" max="120" />
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold small text-secondary">Địa chỉ giao hàng mặc định</label>
+                            <input name="address" type="text" class="form-control py-2.5 rounded-3" value="@Model.Address" />
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label fw-semibold small text-secondary">Cập nhật ảnh đại diện</label>
+                            <input name="profilePicture" class="form-control" type="file" accept="image/*" />
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary px-4 py-2.5 rounded-3 fw-bold mt-4 shadow-sm">
+                        LƯU THAY ĐỔI
+                    </button>
+                </form>
+            </div>
+
+            <!-- Order History List -->
+            <div class="card border-0 shadow-sm rounded-4 bg-white p-4">
+                <h5 class="fw-bold mb-4 border-bottom pb-2 text-dark"><i class="bi bi-receipt me-2 text-primary"></i>Lịch Sử Đặt Mua Hàng</h5>
+
+                @if (orders != null && orders.Any())
+                {
+                    <div class="table-responsive">
+                        <table class="table table-hover align-middle">
+                            <thead class="table-light">
+                                <tr class="small text-secondary">
+                                    <th>Mã Đơn</th>
+                                    <th>Ngày Đặt</th>
+                                    <th>Địa Chỉ</th>
+                                    <th>Tổng Tiền</th>
+                                    <th>Trạng Thái</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var order in orders)
+                                {
+                                    <tr>
+                                        <td class="fw-bold">#@order.Id</td>
+                                        <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                        <td class="text-truncate" style="max-width: 150px;">@order.ShippingAddress</td>
+                                        <td class="fw-bold text-danger">@order.TotalAmount.ToString("N2") $</td>
+                                        <td>
+                                            @if (order.Status == "Pending")
+                                            {
+                                                <span class="badge bg-warning text-dark px-2.5 py-1.5 rounded-pill small">Chờ Duyệt</span>
+                                            }
+                                            else if (order.Status == "Approved")
+                                            {
+                                                <span class="badge bg-info text-white px-2.5 py-1.5 rounded-pill small">Đã Duyệt</span>
+                                            }
+                                            else if (order.Status == "Shipped")
+                                            {
+                                                <span class="badge bg-primary text-white px-2.5 py-1.5 rounded-pill small">Đang Giao</span>
+                                            }
+                                            else if (order.Status == "Completed")
+                                            {
+                                                <span class="badge bg-success text-white px-2.5 py-1.5 rounded-pill small">Hoàn Thành</span>
+                                            }
+                                            else if (order.Status == "Cancelled")
+                                            {
+                                                <span class="badge bg-danger text-white px-2.5 py-1.5 rounded-pill small">Đã Hủy</span>
+                                            }
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5 text-muted">
+                        <i class="bi bi-receipt-cutoff display-4 opacity-25 d-block mb-3"></i>
+                        Bạn chưa thực hiện bất kỳ giao dịch đặt mua hàng nào.
+                    </div>
+                }
+            </div>
+        </div>
+    </div>
+</div>

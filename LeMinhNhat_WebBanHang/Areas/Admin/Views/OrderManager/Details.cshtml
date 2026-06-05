@@ -1,0 +1,125 @@
+@model LeMinhNhat_WebBanHang.Models.Order
+@{
+    ViewData["Title"] = "Chi Tiết Đơn Hàng #" + Model.Id;
+}
+
+<div class="mb-4">
+    <a asp-action="Index" class="btn btn-sm btn-outline-secondary px-3 rounded-pill mb-3">
+        <i class="bi bi-arrow-left me-1"></i> Quay về danh sách
+    </a>
+    <h3 class="fw-bold text-dark"><i class="bi bi-receipt me-2 text-warning"></i>Chi Tiết Đơn Hàng #@Model.Id</h3>
+</div>
+
+<!-- Success message toast alert -->
+@if (TempData["Success"] != null)
+{
+    <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm mb-4" role="alert">
+        <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div>
+}
+
+<div class="row g-4 animate__animated animate__fadeIn">
+    <!-- Info and ordered items -->
+    <div class="col-12 col-lg-8">
+        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+            <h5 class="fw-bold mb-3 border-bottom pb-2 text-dark"><i class="bi bi-person-fill me-2 text-primary"></i>Thông Tin Giao Nhận</h5>
+            <div class="row g-3 small mb-2">
+                <div class="col-md-6"><strong>Tên khách hàng:</strong> @(Model.User?.FullName ?? "N/A")</div>
+                <div class="col-md-6"><strong>Địa chỉ Email:</strong> @Model.User?.Email</div>
+                <div class="col-md-6"><strong>Số điện thoại:</strong> @Model.PhoneNumber</div>
+                <div class="col-md-6"><strong>Địa chỉ giao:</strong> @Model.ShippingAddress</div>
+                <div class="col-12"><strong>Ghi chú:</strong> @(string.IsNullOrEmpty(Model.Notes) ? "Không có" : Model.Notes)</div>
+            </div>
+        </div>
+
+        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+            <h5 class="fw-bold mb-3 border-bottom pb-2 text-dark"><i class="bi bi-list-stars me-2 text-primary"></i>Danh Sách Sản Phẩm Mua</h5>
+            <div class="table-responsive">
+                <table class="table align-middle">
+                    <thead class="table-light">
+                        <tr class="small text-secondary">
+                            <th>Sản Phẩm</th>
+                            <th>Giá</th>
+                            <th>Số Lượng</th>
+                            <th class="text-end">Thành Tiền</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var detail in Model.OrderDetails)
+                        {
+                            <tr>
+                                <td>
+                                    <div class="d-flex align-items-center gap-3">
+                                        <img src="@detail.Product?.ImageUrl" alt="@detail.Product?.Name" class="rounded border p-1" style="width: 50px; height: 50px; object-fit: contain; background: #fff;" />
+                                        <div>
+                                            <h6 class="fw-bold mb-0 text-dark font-13">@detail.Product?.Name</h6>
+                                            <span class="text-muted small">ID: #@detail.ProductId</span>
+                                        </div>
+                                    </div>
+                                </td>
+                                <td>@detail.Price.ToString("N2") $</td>
+                                <td>x@detail.Quantity</td>
+                                <td class="fw-bold text-end">@((detail.Price * detail.Quantity).ToString("N2")) $</td>
+                            </tr>
+                        }
+                        <tr class="border-top">
+                            <td colspan="3" class="fw-bold text-end font-14">TỔNG CỘNG ĐƠN HÀNG:</td>
+                            <td class="fw-extrabold text-danger text-end fs-5">@Model.TotalAmount.ToString("N2") $</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Status updater -->
+    <div class="col-12 col-lg-4">
+        <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+            <h5 class="fw-bold mb-3 border-bottom pb-2 text-dark">Trạng Thái Đơn Hàng</h5>
+            
+            <div class="mb-4">
+                <label class="form-label text-secondary small fw-semibold">Trạng thái hiện tại:</label>
+                <div>
+                    @if (Model.Status == "Pending")
+                    {
+                        <span class="badge bg-warning text-dark px-3 py-2 rounded-pill font-13">Chờ Duyệt</span>
+                    }
+                    else if (Model.Status == "Approved")
+                    {
+                        <span class="badge bg-info text-white px-3 py-2 rounded-pill font-13">Đã Duyệt</span>
+                    }
+                    else if (Model.Status == "Shipped")
+                    {
+                        <span class="badge bg-primary text-white px-3 py-2 rounded-pill font-13">Đang Giao</span>
+                    }
+                    else if (Model.Status == "Completed")
+                    {
+                        <span class="badge bg-success text-white px-3 py-2 rounded-pill font-13">Hoàn Thành</span>
+                    }
+                    else if (Model.Status == "Cancelled")
+                    {
+                        <span class="badge bg-danger text-white px-3 py-2 rounded-pill font-13">Đã Hủy</span>
+                    }
+                </div>
+            </div>
+
+            <form asp-action="UpdateStatus" method="post">
+                <input type="hidden" name="id" value="@Model.Id" />
+                <div class="mb-3">
+                    <label class="form-label text-secondary small fw-semibold">Cập nhật trạng thái mới:</label>
+                    <select name="status" class="form-select py-2 rounded-3">
+                        <option value="Pending" selected="@(Model.Status == "Pending")">Chờ Duyệt (Pending)</option>
+                        <option value="Approved" selected="@(Model.Status == "Approved")">Duyệt Đơn (Approved)</option>
+                        <option value="Shipped" selected="@(Model.Status == "Shipped")">Đang Giao Hàng (Shipped)</option>
+                        <option value="Completed" selected="@(Model.Status == "Completed")">Hoàn Thành (Completed)</option>
+                        <option value="Cancelled" selected="@(Model.Status == "Cancelled")">Hủy Đơn (Cancelled)</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn btn-warning w-100 py-2.5 rounded-3 fw-bold shadow-sm">
+                    LƯU TRẠNG THÁI MỚI
+                </button>
+            </form>
+        </div>
+    </div>
+</div>

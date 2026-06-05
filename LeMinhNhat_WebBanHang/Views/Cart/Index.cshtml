@@ -1,0 +1,143 @@
+@model IEnumerable<LeMinhNhat_WebBanHang.Models.CartItem>
+@{
+    ViewData["Title"] = "Giỏ Hàng Của Bạn";
+}
+
+<div class="container py-5">
+    <h3 class="fw-bold mb-4"><i class="bi bi-cart3 me-2 text-primary"></i>Giỏ Hàng Của Bạn</h3>
+
+    <div class="row g-4" id="cart-page-container">
+        @if (Model != null && Model.Any())
+        {
+            <div class="col-12 col-lg-8 animate__animated animate__fadeIn">
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                    <div class="table-responsive">
+                        <table class="table align-middle">
+                            <thead class="table-light">
+                                <tr class="small text-secondary">
+                                    <th>Sản Phẩm</th>
+                                    <th>Giá</th>
+                                    <th style="width: 130px;">Số Lượng</th>
+                                    <th>Tổng</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var item in Model)
+                                {
+                                    <tr id="cart-row-@item.ProductId">
+                                        <td>
+                                            <div class="d-flex align-items-center gap-3">
+                                                <img src="@item.ProductImage" alt="@item.ProductName" class="rounded border p-1" style="width: 60px; height: 60px; object-fit: contain;" />
+                                                <div>
+                                                    <h6 class="fw-bold mb-0 text-dark font-13 text-truncate" style="max-width: 200px;">@item.ProductName</h6>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td class="fw-semibold">@item.Price.ToString("N2") $</td>
+                                        <td>
+                                            <div class="input-group input-group-sm border rounded-pill overflow-hidden" style="max-width: 110px;">
+                                                <button class="btn btn-light border-0 shadow-none px-2.5" onclick="changeQty(@item.ProductId, -1)"><i class="bi bi-minus"></i></button>
+                                                <input type="text" id="qty-@item.ProductId" class="form-control border-0 text-center bg-white fw-bold shadow-none" value="@item.Quantity" readonly />
+                                                <button class="btn btn-light border-0 shadow-none px-2.5" onclick="changeQty(@item.ProductId, 1)"><i class="bi bi-plus"></i></button>
+                                            </div>
+                                        </td>
+                                        <td class="fw-bold text-danger" id="total-@item.ProductId">@item.TotalPrice.ToString("N2") $</td>
+                                        <td>
+                                            <button class="btn btn-sm btn-link text-muted shadow-none" onclick="removePageItem(@item.ProductId)"><i class="bi bi-trash fs-5"></i></button>
+                                        </td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <a class="btn btn-outline-secondary py-2.5 px-4 rounded-3 fw-bold font-13" asp-controller="Product" asp-action="Index">
+                    <i class="bi bi-arrow-left me-2"></i>Tiếp tục mua sắm
+                </a>
+            </div>
+
+            <!-- Cart Summary Panel -->
+            <div class="col-12 col-lg-4 animate__animated animate__fadeIn">
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2">Tóm Tắt Đơn Hàng</h5>
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="text-secondary small">Tổng số lượng:</span>
+                        <span class="fw-bold" id="summary-items">@Model.Sum(i => i.Quantity) sản phẩm</span>
+                    </div>
+                    <div class="d-flex justify-content-between mb-4 border-top pt-2 fs-5 fw-extrabold text-danger">
+                        <span>Tổng cộng:</span>
+                        <span id="summary-total">@Model.Sum(i => i.TotalPrice).ToString("N2") $</span>
+                    </div>
+                    <a class="btn btn-primary w-100 py-3 rounded-3 fw-bold shadow" asp-controller="Cart" asp-action="Checkout">
+                        TIẾN HÀNH THANH TOÁN
+                    </a>
+                </div>
+            </div>
+        }
+        else
+        {
+            <div class="col-12 text-center py-5">
+                <div class="card border-0 shadow-sm rounded-4 p-5 bg-white d-inline-block">
+                    <i class="bi bi-cart-x display-1 text-muted opacity-25 d-block mb-3"></i>
+                    <h4 class="fw-bold text-dark mb-2">Giỏ Hàng Đang Trống</h4>
+                    <p class="text-muted mb-4">Bạn chưa chọn mua bất kỳ linh kiện nào từ cửa hàng.</p>
+                    <a class="btn btn-primary px-4 py-2.5 rounded-pill shadow fw-bold" asp-controller="Product" asp-action="Index">Mua Sắm Ngay</a>
+                </div>
+            </div>
+        }
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        function changeQty(productId, val) {
+            var $input = $('#qty-' + productId);
+            var currentVal = parseInt($input.val());
+            var newVal = currentVal + val;
+            if (newVal <= 0) {
+                removePageItem(productId);
+                return;
+            }
+
+            $.ajax({
+                url: '/Cart/UpdateQuantity',
+                type: 'POST',
+                data: { productId: productId, quantity: newVal },
+                success: function(data) {
+                    if (data.success) {
+                        $input.val(newVal);
+                        updateCartBadge(data.totalItems);
+                        // Refresh item total and grand total
+                        location.reload(); // Simple approach to keep sums synced
+                    } else {
+                        alert(data.message || 'Lỗi khi cập nhật số lượng.');
+                    }
+                }
+            });
+        }
+
+        function removePageItem(productId) {
+            $.ajax({
+                url: '/Cart/RemoveFromCart',
+                type: 'POST',
+                data: { productId: productId },
+                success: function(data) {
+                    if (data.success) {
+                        $('#cart-row-' + productId).fadeOut(300, function() {
+                            location.reload(); // Simple approach to update sums
+                        });
+                        updateCartBadge(data.totalItems);
+                    } else {
+                        alert(data.message || 'Lỗi khi xóa khỏi giỏ.');
+                    }
+                }
+            });
+        }
+
+        function loadCartPageData() {
+            location.reload();
+        }
+    </script>
+}

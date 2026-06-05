@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace LeMinhNhat_WebBanHang.Migrations
 {
-    [DbContext(typeof(ApplicationDbContext))]
+    [DbContext(typeof(LeMinhNhat_WebBanHang.DataAccess.ApplicationDbContext))]
     [Migration("20260529063636_KhoiTao")]
     partial class KhoiTao
     {
