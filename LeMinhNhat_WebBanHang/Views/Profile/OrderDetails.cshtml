@@ -1,0 +1,258 @@
+@model LeMinhNhat_WebBanHang.Models.Order
+@{
+    ViewData["Title"] = "Chi Tiết Đơn Hàng #" + Model.Id;
+
+    // Calculate stepper states
+    string status = Model.Status;
+    bool isStep1Active = status != "Cancelled";
+    bool isStep2Active = status == "Shipped" || status == "Shipping" || status == "Delivering" || status == "Completed" || status == "Delivered";
+    bool isStep3Active = status == "Shipping" || status == "Delivering" || status == "Completed" || status == "Delivered";
+    bool isStep4Active = status == "Completed" || status == "Delivered";
+
+    int progressPercent = 0;
+    if (isStep4Active) progressPercent = 100;
+    else if (isStep3Active) progressPercent = 66;
+    else if (isStep2Active) progressPercent = 33;
+    else if (isStep1Active) progressPercent = 0;
+
+    // Localized labels
+    string paymentText = Model.PaymentMethod switch
+    {
+        "CreditCard" => "Thẻ tín dụng / Thẻ ghi nợ",
+        "DigitalWallet" => "Ví điện tử (MoMo/ZaloPay)",
+        "BankTransfer" => "Chuyển khoản Ngân hàng",
+        _ => Model.PaymentMethod ?? "Chưa thanh toán"
+    };
+
+    string shippingText = Model.ShippingMethod switch
+    {
+        "Standard" => "Giao hàng Tiêu chuẩn",
+        "Express" => "Giao hàng Nhanh Hỏa tốc",
+        _ => Model.ShippingMethod ?? "Giao hàng tiêu chuẩn"
+    };
+}
+
+<div class="container py-5 animate__animated animate__fadeIn">
+    <!-- Header -->
+    <div class="d-flex align-items-center justify-content-between mb-4 pb-2 border-bottom">
+        <div>
+            <a class="text-decoration-none text-muted small" asp-action="Index">
+                <i class="bi bi-chevron-left me-1"></i> Quay lại hồ sơ
+            </a>
+            <h3 class="fw-bold text-dark mt-2">Đơn Hàng #@Model.Id</h3>
+            <span class="text-muted small">Ngày đặt hàng: @Model.OrderDate.ToString("dd/MM/yyyy HH:mm")</span>
+        </div>
+        <div class="text-end">
+            <h5 class="fw-bold mb-1">Trạng thái:</h5>
+            @if (status == "Pending")
+            {
+                <span class="badge bg-warning text-dark px-3 py-2 rounded-pill fs-6 fw-semibold">Chờ Duyệt</span>
+            }
+            else if (status == "Approved" || status == "Confirmed")
+            {
+                <span class="badge bg-info text-white px-3 py-2 rounded-pill fs-6 fw-semibold">Đã Xác Nhận</span>
+            }
+            else if (status == "Shipped")
+            {
+                <span class="badge bg-primary text-white px-3 py-2 rounded-pill fs-6 fw-semibold">Đã Gửi Hàng</span>
+            }
+            else if (status == "Shipping" || status == "Delivering")
+            {
+                <span class="badge bg-primary text-white px-3 py-2 rounded-pill fs-6 fw-semibold">Đang Vận Chuyển</span>
+            }
+            else if (status == "Completed" || status == "Delivered")
+            {
+                <span class="badge bg-success text-white px-3 py-2 rounded-pill fs-6 fw-semibold">Đã Giao</span>
+            }
+            else if (status == "Cancelled")
+            {
+                <span class="badge bg-danger text-white px-3 py-2 rounded-pill fs-6 fw-semibold">Đã Hủy</span>
+            }
+        </div>
+    </div>
+
+    <!-- 1. Visual Tracking Timeline -->
+    @if (status != "Cancelled")
+    {
+        <div class="card border-0 shadow-sm rounded-4 p-5 bg-white mb-4 position-relative overflow-hidden">
+            <h5 class="fw-bold mb-5 text-dark"><i class="bi bi-truck-flatbed me-2 text-primary"></i>Hành Trình Giao Hàng</h5>
+            
+            <div class="position-relative py-3">
+                <!-- Connective lines -->
+                <div class="position-absolute start-0 end-0 bg-light" style="height: 5px; top: 35px; z-index: 1;"></div>
+                <div class="position-absolute start-0 bg-success transition" style="height: 5px; top: 35px; z-index: 2; width: @(progressPercent)%;"></div>
+
+                <div class="row text-center position-relative" style="z-index: 3;">
+                    <!-- Step 1 -->
+                    <div class="col-3">
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle shadow-sm border border-3 @(isStep1Active ? "border-success bg-success text-white" : "border-light bg-white text-muted")" style="width: 45px; height: 45px;">
+                            <i class="bi bi-check-lg fs-5"></i>
+                        </div>
+                        <h6 class="fw-bold mt-3 mb-1 @(isStep1Active ? "text-success" : "text-muted")">Đã Xác Nhận</h6>
+                        <p class="small text-secondary mb-0">Đơn hàng hợp lệ</p>
+                    </div>
+
+                    <!-- Step 2 -->
+                    <div class="col-3">
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle shadow-sm border border-3 @(isStep2Active ? "border-success bg-success text-white" : "border-light bg-white text-muted")" style="width: 45px; height: 45px;">
+                            <i class="bi @(isStep2Active ? "bi-check-lg" : "bi-box-seam") fs-5"></i>
+                        </div>
+                        <h6 class="fw-bold mt-3 mb-1 @(isStep2Active ? "text-success" : "text-muted")">Đã Gửi Hàng</h6>
+                        <p class="small text-secondary mb-0">Đã đóng gói hàng</p>
+                    </div>
+
+                    <!-- Step 3 -->
+                    <div class="col-3">
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle shadow-sm border border-3 @(isStep3Active ? "border-success bg-success text-white" : "border-light bg-white text-muted")" style="width: 45px; height: 45px;">
+                            <i class="bi @(isStep3Active ? "bi-check-lg" : "bi-truck") fs-5"></i>
+                        </div>
+                        <h6 class="fw-bold mt-3 mb-1 @(isStep3Active ? "text-success" : "text-muted")">Đang Vận Chuyển</h6>
+                        <p class="small text-secondary mb-0">Đang giao đến bạn</p>
+                    </div>
+
+                    <!-- Step 4 -->
+                    <div class="col-3">
+                        <div class="d-inline-flex align-items-center justify-content-center rounded-circle shadow-sm border border-3 @(isStep4Active ? "border-success bg-success text-white" : "border-light bg-white text-muted")" style="width: 45px; height: 45px;">
+                            <i class="bi @(isStep4Active ? "bi-check-lg" : "bi-house-check") fs-5"></i>
+                        </div>
+                        <h6 class="fw-bold mt-3 mb-1 @(isStep4Active ? "text-success" : "text-muted")">Đã Giao</h6>
+                        <p class="small text-secondary mb-0">Nhận hàng thành công</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert alert-danger rounded-4 border-0 p-4 mb-4 d-flex align-items-center shadow-sm">
+            <i class="bi bi-x-circle-fill fs-2 me-3"></i>
+            <div>
+                <h5 class="fw-bold mb-1 text-danger">Đơn hàng này đã bị hủy</h5>
+                <span class="small text-secondary">Đơn hàng đã được hoàn tiền hoặc hủy bỏ bởi quản trị viên. Liên hệ bộ phận CSKH để được trợ giúp.</span>
+            </div>
+        </div>
+    }
+
+    <!-- 2. Address & Delivery Information Cards -->
+    <div class="row g-4 mb-4">
+        <!-- Delivery info -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                <h5 class="fw-bold mb-3 border-bottom pb-2 text-dark"><i class="bi bi-geo-alt-fill text-primary me-2"></i>Địa Chỉ Nhận Hàng</h5>
+                <table class="table table-borderless table-sm mb-0">
+                    <tr>
+                        <td class="text-secondary small py-1" style="width: 130px;">Họ tên:</td>
+                        <td class="fw-bold text-dark py-1">@(Model.ReceiverName ?? Model.User?.FullName ?? "N/A")</td>
+                    </tr>
+                    <tr>
+                        <td class="text-secondary small py-1">Số điện thoại:</td>
+                        <td class="fw-bold text-dark py-1">@Model.PhoneNumber</td>
+                    </tr>
+                    <tr>
+                        <td class="text-secondary small py-1">Địa chỉ giao:</td>
+                        <td class="text-dark py-1">@Model.ShippingAddress</td>
+                    </tr>
+                    @if (!string.IsNullOrEmpty(Model.Notes))
+                    {
+                        <tr>
+                            <td class="text-secondary small py-1">Ghi chú:</td>
+                            <td class="text-secondary small py-1"><i>"@Model.Notes"</i></td>
+                        </tr>
+                    }
+                </table>
+            </div>
+        </div>
+
+        <!-- Payment & billing details -->
+        <div class="col-md-6">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white h-100">
+                <h5 class="fw-bold mb-3 border-bottom pb-2 text-dark"><i class="bi bi-credit-card-fill text-primary me-2"></i>Thanh Toán & Vận Chuyển</h5>
+                <table class="table table-borderless table-sm mb-0">
+                    <tr>
+                        <td class="text-secondary small py-1" style="width: 140px;">Phương thức t/toán:</td>
+                        <td class="fw-bold text-dark py-1">@paymentText</td>
+                    </tr>
+                    <tr>
+                        <td class="text-secondary small py-1">Đơn vị vận chuyển:</td>
+                        <td class="fw-bold text-dark py-1">@shippingText</td>
+                    </tr>
+                    <tr>
+                        <td class="text-secondary small py-1">Mã Voucher áp dụng:</td>
+                        <td class="text-success fw-bold py-1">@(string.IsNullOrEmpty(Model.CouponCode) ? "Không có" : Model.CouponCode)</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- 3. Invoice detail table -->
+    <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+        <h5 class="fw-bold mb-4 border-bottom pb-2 text-dark"><i class="bi bi-list-stars text-primary me-2"></i>Danh Sách Sản Phẩm</h5>
+        
+        <div class="table-responsive">
+            <table class="table align-middle mb-0">
+                <thead class="table-light">
+                    <tr class="small text-secondary text-uppercase fw-bold">
+                        <th>Sản Phẩm</th>
+                        <th class="text-center">Đơn Giá</th>
+                        <th class="text-center">Số Lượng</th>
+                        <th class="text-end">Thành Tiền</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model.OrderDetails)
+                    {
+                        <tr>
+                            <td>
+                                <div class="d-flex align-items-center gap-3">
+                                    <img src="@(item.Product?.ImageUrl ?? "/images/no-image.png")" alt="@(item.Product?.Name ?? "Sản phẩm")" class="rounded border p-1" style="width: 50px; height: 50px; object-fit: contain;" />
+                                    <div>
+                                        <h6 class="fw-bold mb-0 text-dark">@(item.Product?.Name ?? "Sản phẩm")</h6>
+                                        <span class="text-muted small">Mã hàng: #@item.ProductId</span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-center fw-semibold text-dark">$@item.Price.ToString("N2")</td>
+                            <td class="text-center text-dark">@item.Quantity</td>
+                            <td class="text-end fw-bold text-dark">$@((item.Price * item.Quantity).ToString("N2"))</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- 4. Pricing summary -->
+    <div class="row justify-content-end">
+        <div class="col-12 col-md-5 col-lg-4">
+            <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                <div class="d-flex justify-content-between mb-2 small text-secondary">
+                    <span>Tiền hàng:</span>
+                    <span class="fw-semibold text-dark">$@((Model.TotalAmount - Model.ShippingFee + Model.DiscountAmount).ToString("N2"))</span>
+                </div>
+                <div class="d-flex justify-content-between mb-2 small text-secondary">
+                    <span>Phí vận chuyển:</span>
+                    <span class="fw-semibold text-dark">$@Model.ShippingFee.ToString("N2")</span>
+                </div>
+                @if (Model.DiscountAmount > 0)
+                {
+                    <div class="d-flex justify-content-between mb-2 small text-secondary">
+                        <span>Giảm giá:</span>
+                        <span class="fw-bold text-success">-$@Model.DiscountAmount.ToString("N2")</span>
+                    </div>
+                }
+                <hr class="my-2" />
+                <div class="d-flex justify-content-between align-items-center mt-2 fs-5">
+                    <span class="fw-bold text-dark">Tổng thanh toán:</span>
+                    <span class="fw-extrabold text-danger">$@Model.TotalAmount.ToString("N2")</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .transition {
+        transition: all 0.5s ease-in-out;
+    }
+</style>

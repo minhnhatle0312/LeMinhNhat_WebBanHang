@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity;
 using System.ComponentModel.DataAnnotations;
 
 namespace LeMinhNhat_WebBanHang.Models
@@ -16,6 +16,11 @@ namespace LeMinhNhat_WebBanHang.Models
         public int? Age { get; set; }
 
         public string? ProfilePictureUrl { get; set; }
+
+        public int LoyaltyPoints { get; set; } = 0;
+
+        [StringLength(50)]
+        public string MembershipRank { get; set; } = "Đồng";
 
         public DateTime AccountCreatedAt { get; set; } = DateTime.Now;
     }

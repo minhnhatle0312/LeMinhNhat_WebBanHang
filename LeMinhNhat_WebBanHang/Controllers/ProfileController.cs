@@ -45,6 +45,22 @@ namespace LeMinhNhat_WebBanHang.Controllers
             return View(user);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> OrderDetails(int id)
+        {
+            var user = await _userManager.GetUserAsync(User);
+            if (user == null) return Challenge();
+
+            var order = await _context.Orders
+                .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.Product)
+                .FirstOrDefaultAsync(o => o.Id == id && o.UserId == user.Id);
+
+            if (order == null) return NotFound();
+
+            return View(order);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Update(string fullName, string? address, int? age, IFormFile? profilePicture)
         {

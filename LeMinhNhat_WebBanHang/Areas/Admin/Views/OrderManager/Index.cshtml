@@ -3,19 +3,53 @@
     ViewData["Title"] = "Quản Lý Đơn Hàng";
 }
 
-<h3 class="fw-bold mb-4 text-dark"><i class="bi bi-receipt-cutoff me-2 text-warning"></i>Quản Lý Đơn Hàng</h3>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h3 class="fw-bold mb-0 text-dark"><i class="bi bi-receipt-cutoff me-2 text-warning"></i>Quản Lý Đơn Hàng</h3>
+    <a href="/Admin/OrderManager/ExportOrdersCsv" class="btn btn-success fw-bold shadow-sm">
+        <i class="bi bi-file-earmark-spreadsheet me-1"></i> Xuất Báo Cáo CSV
+    </a>
+</div>
 
+<!-- Smart Filters Row -->
+<div class="card border-0 shadow-sm rounded-4 p-3 bg-white mb-4">
+    <div class="d-flex flex-wrap gap-2 align-items-center justify-content-between">
+        <div class="d-flex flex-wrap gap-1" id="status-filter-group">
+            <button type="button" class="btn btn-light btn-sm px-3 rounded-3 fw-bold active" data-filter="all">Tất Cả</button>
+            <button type="button" class="btn btn-light btn-sm px-3 rounded-3 fw-bold" data-filter="Pending">Chờ Duyệt</button>
+            <button type="button" class="btn btn-light btn-sm px-3 rounded-3 fw-bold" data-filter="Approved">Đã Xác Nhận</button>
+            <button type="button" class="btn btn-light btn-sm px-3 rounded-3 fw-bold" data-filter="Shipped">Đã Gửi Hàng</button>
+            <button type="button" class="btn btn-light btn-sm px-3 rounded-3 fw-bold" data-filter="Shipping">Đang Vận Chuyển</button>
+            <button type="button" class="btn btn-light btn-sm px-3 rounded-3 fw-bold" data-filter="Completed">Đã Giao</button>
+            <button type="button" class="btn btn-light btn-sm px-3 rounded-3 fw-bold" data-filter="Cancelled">Đã Hủy</button>
+        </div>
+        <div class="small text-secondary fw-semibold">
+            Tổng cộng: <span class="text-dark fw-bold">@Model.Count()</span> đơn hàng
+        </div>
+    </div>
+</div>
+
+<!-- AJAX Toast Notification -->
+<div class="toast-container position-fixed bottom-0 end-0 p-3" style="z-index: 1100;">
+    <div id="status-toast" class="toast align-items-center text-white border-0 rounded-3" role="alert" aria-live="assertive" aria-atomic="true">
+        <div class="d-flex">
+            <div class="toast-body small fw-bold" id="toast-message"></div>
+            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+        </div>
+    </div>
+</div>
+
+<!-- Orders Table -->
 <div class="card border-0 shadow-sm rounded-4 p-4 bg-white animate__animated animate__fadeIn">
     <div class="table-responsive">
-        <table class="table table-hover align-middle">
+        <table class="table table-hover align-middle mb-0" id="orders-table">
             <thead class="table-light">
-                <tr class="small text-secondary">
+                <tr class="small text-secondary fw-bold text-uppercase">
                     <th>Mã Đơn</th>
                     <th>Khách Hàng</th>
                     <th>Ngày Đặt</th>
                     <th>Tổng Tiền</th>
                     <th>Số Điện Thoại</th>
-                    <th>Trạng Thái</th>
+                    <th>Cập Nhật Trạng Thái</th>
                     <th class="text-end">Hành Động</th>
                 </tr>
             </thead>
@@ -24,39 +58,42 @@
                 {
                     foreach (var item in Model)
                     {
-                        <tr>
-                            <td class="fw-bold">#@item.Id</td>
+                        // Map status names for row data-status
+                        string dataStatus = item.Status switch
+                        {
+                            "Approved" => "Approved",
+                            "Confirmed" => "Approved",
+                            "Shipped" => "Shipped",
+                            "Shipping" => "Shipping",
+                            "Delivering" => "Shipping",
+                            "Completed" => "Completed",
+                            "Delivered" => "Completed",
+                            "Cancelled" => "Cancelled",
+                            _ => "Pending"
+                        };
+
+                        <tr id="order-row-@item.Id" data-status="@dataStatus" class="order-table-row border-bottom">
+                            <td class="fw-bold text-dark">#@item.Id</td>
                             <td>
-                                <div class="fw-bold text-dark font-13">@(item.User?.FullName ?? "N/A")</div>
+                                <div class="fw-bold text-dark font-13">@(item.ReceiverName ?? item.User?.FullName ?? "N/A")</div>
                                 <span class="text-muted small">@item.User?.Email</span>
                             </td>
-                            <td>@item.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
-                            <td class="fw-bold text-danger">@item.TotalAmount.ToString("N2") $</td>
-                            <td>@item.PhoneNumber</td>
+                            <td class="small text-secondary">@item.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                            <td class="fw-bold text-danger">$@item.TotalAmount.ToString("N2")</td>
+                            <td class="text-dark small">@item.PhoneNumber</td>
                             <td>
-                                @if (item.Status == "Pending")
-                                {
-                                    <span class="badge bg-warning text-dark px-2.5 py-1.5 rounded-pill small">Chờ Duyệt</span>
-                                }
-                                else if (item.Status == "Approved")
-                                {
-                                    <span class="badge bg-info text-white px-2.5 py-1.5 rounded-pill small">Đã Duyệt</span>
-                                }
-                                else if (item.Status == "Shipped")
-                                {
-                                    <span class="badge bg-primary text-white px-2.5 py-1.5 rounded-pill small">Đang Giao</span>
-                                }
-                                else if (item.Status == "Completed")
-                                {
-                                    <span class="badge bg-success text-white px-2.5 py-1.5 rounded-pill small">Hoàn Thành</span>
-                                }
-                                else if (item.Status == "Cancelled")
-                                {
-                                    <span class="badge bg-danger text-white px-2.5 py-1.5 rounded-pill small">Đã Hủy</span>
-                                }
+                                <select class="form-select form-select-sm status-dropdown shadow-none @(item.Status == "Completed" ? "border-success text-success fw-bold" : (item.Status == "Cancelled" ? "border-danger text-danger fw-bold" : "text-dark"))" 
+                                        data-id="@item.Id" style="max-width: 165px; border-radius: 8px;">
+                                    <option value="Pending" selected="@(item.Status == "Pending")">Chờ Duyệt</option>
+                                    <option value="Approved" selected="@(item.Status == "Approved" || item.Status == "Confirmed")">Đã Xác Nhận</option>
+                                    <option value="Shipped" selected="@(item.Status == "Shipped")">Đã Gửi Hàng</option>
+                                    <option value="Shipping" selected="@(item.Status == "Shipping" || item.Status == "Delivering")">Đang Vận Chuyển</option>
+                                    <option value="Completed" selected="@(item.Status == "Completed" || item.Status == "Delivered")">Đã Giao</option>
+                                    <option value="Cancelled" selected="@(item.Status == "Cancelled")">Đã Hủy</option>
+                                </select>
                             </td>
                             <td class="text-end">
-                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning">
+                                <a asp-action="Details" asp-route-id="@item.Id" class="btn btn-sm btn-outline-warning rounded-3 py-1.5 px-3 fw-bold small">
                                     <i class="bi bi-eye-fill"></i> Chi Tiết
                                 </a>
                             </td>
@@ -75,3 +112,93 @@
         </table>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        $(document).ready(function() {
+            // Client-side filtering by status tabs
+            $('#status-filter-group button').click(function() {
+                // Toggle active class
+                $('#status-filter-group button').removeClass('active btn-primary text-white').addClass('btn-light');
+                $(this).addClass('active btn-primary text-white').removeClass('btn-light');
+
+                var filter = $(this).data('filter');
+
+                if (filter === 'all') {
+                    $('.order-table-row').show();
+                } else {
+                    $('.order-table-row').hide();
+                    $('.order-table-row[data-status="' + filter + '"]').show();
+                }
+            });
+
+            // Inline change handler for status dropdown
+            $('.status-dropdown').change(function() {
+                var $select = $(this);
+                var orderId = $select.data('id');
+                var newStatus = $select.val();
+
+                $.ajax({
+                    url: '/Admin/OrderManager/UpdateStatusAjax',
+                    type: 'POST',
+                    data: { id: orderId, status: newStatus },
+                    success: function(data) {
+                        if (data.success) {
+                            // Update row status attribute
+                            var mappedStatus = newStatus;
+                            if (newStatus === 'Confirmed') mappedStatus = 'Approved';
+                            if (newStatus === 'Delivering') mappedStatus = 'Shipping';
+                            if (newStatus === 'Delivered') mappedStatus = 'Completed';
+                            
+                            $('#order-row-' + orderId).attr('data-status', mappedStatus);
+
+                            // Toggle visual dropdown borders
+                            $select.removeClass('border-success text-success border-danger text-danger fw-bold');
+                            if (newStatus === 'Completed' || newStatus === 'Delivered') {
+                                $select.addClass('border-success text-success fw-bold');
+                            } else if (newStatus === 'Cancelled') {
+                                $select.addClass('border-danger text-danger fw-bold');
+                            }
+
+                            // Show custom toast notification
+                            showToast(true, 'Đơn hàng #' + orderId + ': ' + data.message);
+                        } else {
+                            showToast(false, 'Lỗi: ' + data.message);
+                        }
+                    },
+                    error: function() {
+                        showToast(false, 'Có lỗi kết nối mạng xảy ra.');
+                    }
+                });
+            });
+        });
+
+        function showToast(isSuccess, message) {
+            var $toast = $('#status-toast');
+            var $msg = $('#toast-message');
+            
+            $toast.removeClass('bg-success bg-danger');
+            if (isSuccess) {
+                $toast.addClass('bg-success');
+            } else {
+                $toast.addClass('bg-danger');
+            }
+            
+            $msg.text(message);
+            var toastEl = new bootstrap.Toast($toast[0]);
+            toastEl.show();
+        }
+    </script>
+
+    <style>
+        #status-filter-group button.active {
+            box-shadow: 0 4px 10px rgba(13, 110, 253, 0.15);
+        }
+        .order-table-row {
+            transition: all 0.2s ease-in-out;
+        }
+        .order-table-row:hover {
+            background-color: rgba(255, 193, 7, 0.03) !important;
+        }
+    </style>
+}

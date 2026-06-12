@@ -2,75 +2,227 @@
 @{
     ViewData["Title"] = "Thanh Toán Đơn Hàng";
     var cartItems = ViewBag.CartItems as List<LeMinhNhat_WebBanHang.Models.CartItem> ?? new List<LeMinhNhat_WebBanHang.Models.CartItem>();
+    decimal subTotal = ViewBag.SubTotal != null ? (decimal)ViewBag.SubTotal : 0;
+    decimal discount = ViewBag.Discount != null ? (decimal)ViewBag.Discount : 0;
+    decimal shippingFee = ViewBag.ShippingFee != null ? (decimal)ViewBag.ShippingFee : 0;
+    decimal grandTotal = ViewBag.GrandTotal != null ? (decimal)ViewBag.GrandTotal : 0;
+    string couponCode = ViewBag.CouponCode as string ?? "";
 }
 
 <div class="container py-5">
-    <h3 class="fw-bold mb-4"><i class="bi bi-credit-card-2-front me-2 text-primary"></i>Thanh Toán Đơn Hàng</h3>
+    <div class="mb-4">
+        <a class="text-decoration-none text-muted small" asp-controller="Cart" asp-action="Index">
+            <i class="bi bi-chevron-left me-1"></i> Quay lại giỏ hàng
+        </a>
+        <h3 class="fw-bold text-dark mt-2"><i class="bi bi-wallet2 me-2 text-primary"></i>Thanh Toán Tinh Gọn (One-Page Checkout)</h3>
+    </div>
 
-    <form asp-action="Checkout" method="post">
+    <form asp-action="Checkout" method="post" id="checkout-form">
+        <!-- Bind hidden fields for totals -->
+        <input type="hidden" asp-for="UserId" />
+        <input type="hidden" name="subtotal" id="hidden-subtotal" value="@subTotal" />
+        <input type="hidden" asp-for="DiscountAmount" id="hidden-discount" value="@discount" />
+        <input type="hidden" asp-for="ShippingFee" id="hidden-shipping-fee" value="@shippingFee" />
+        <input type="hidden" asp-for="TotalAmount" id="hidden-grand-total" value="@grandTotal" />
+        <input type="hidden" asp-for="CouponCode" value="@couponCode" />
+
         <div class="row g-4 animate__animated animate__fadeIn">
-            <!-- Delivery details form -->
-            <div class="col-12 col-lg-7">
-                <div class="card border-0 shadow-sm rounded-4 p-4 p-md-5 bg-white">
-                    <h5 class="fw-bold mb-4 border-bottom pb-2 text-dark"><i class="bi bi-geo-alt-fill me-2 text-primary"></i>Thông Tin Giao Hàng</h5>
+            <!-- Left Side: Forms -->
+            <div class="col-12 col-lg-8">
+                <!-- 1. Delivery Details Form -->
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                    <h5 class="fw-bold mb-4 border-bottom pb-2 text-dark">
+                        <span class="badge bg-primary rounded-circle me-2" style="padding: 5px 10px;">1</span>Thông Tin Giao Hàng
+                    </h5>
 
                     <div asp-validation-summary="ModelOnly" class="text-danger small mb-3" role="alert"></div>
 
-                    <!-- PhoneNumber -->
-                    <div class="mb-3">
-                        <label asp-for="PhoneNumber" class="form-label fw-semibold small text-secondary">Số điện thoại liên hệ</label>
-                        <input asp-for="PhoneNumber" class="form-control py-2.5 rounded-3" placeholder="Ví dụ: 0912345678" />
-                        <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                    <div class="row g-3">
+                        <!-- Receiver Name -->
+                        <div class="col-md-6">
+                            <label asp-for="ReceiverName" class="form-label fw-semibold small text-secondary">Họ tên người nhận</label>
+                            <input asp-for="ReceiverName" class="form-control py-2.5 rounded-3 shadow-none" placeholder="Họ và tên đầy đủ" required />
+                            <span asp-validation-for="ReceiverName" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Phone Number -->
+                        <div class="col-md-6">
+                            <label asp-for="PhoneNumber" class="form-label fw-semibold small text-secondary">Số điện thoại liên hệ</label>
+                            <input asp-for="PhoneNumber" class="form-control py-2.5 rounded-3 shadow-none" placeholder="Ví dụ: 0912345678" required />
+                            <span asp-validation-for="PhoneNumber" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Address Hierarchy Dropdowns -->
+                        <div class="col-md-4">
+                            <label asp-for="Province" class="form-label fw-semibold small text-secondary">Tỉnh/Thành phố</label>
+                            <select asp-for="Province" id="province-select" class="form-select py-2.5 rounded-3 shadow-none" required>
+                                <option value="">-- Chọn Tỉnh/Thành phố --</option>
+                            </select>
+                            <span asp-validation-for="Province" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="District" class="form-label fw-semibold small text-secondary">Quận/Huyện</label>
+                            <select asp-for="District" id="district-select" class="form-select py-2.5 rounded-3 shadow-none" required disabled>
+                                <option value="">-- Chọn Quận/Huyện --</option>
+                            </select>
+                            <span asp-validation-for="District" class="text-danger small"></span>
+                        </div>
+
+                        <div class="col-md-4">
+                            <label asp-for="Ward" class="form-label fw-semibold small text-secondary">Phường/Xã</label>
+                            <select asp-for="Ward" id="ward-select" class="form-select py-2.5 rounded-3 shadow-none" required disabled>
+                                <option value="">-- Chọn Phường/Xã --</option>
+                            </select>
+                            <span asp-validation-for="Ward" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Street Address Details -->
+                        <div class="col-12">
+                            <label asp-for="ShippingAddress" class="form-label fw-semibold small text-secondary">Địa chỉ cụ thể</label>
+                            <input asp-for="ShippingAddress" class="form-control py-2.5 rounded-3 shadow-none" placeholder="Số nhà, tên đường, khu dân cư..." required />
+                            <span asp-validation-for="ShippingAddress" class="text-danger small"></span>
+                        </div>
+
+                        <!-- Notes -->
+                        <div class="col-12">
+                            <label asp-for="Notes" class="form-label fw-semibold small text-secondary">Ghi chú giao hàng (Không bắt buộc)</label>
+                            <textarea asp-for="Notes" class="form-control rounded-3 shadow-none" rows="2" placeholder="Ví dụ: Giao ngoài giờ hành chính, gọi điện trước khi giao..."></textarea>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 2. Delivery Methods -->
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
+                    <h5 class="fw-bold mb-3 text-dark">
+                        <span class="badge bg-primary rounded-circle me-2" style="padding: 5px 10px;">2</span>Phương Thức Vận Chuyển
+                    </h5>
+                    <div class="row g-3">
+                        <div class="col-md-6">
+                            <div class="form-check card-radio p-3 border rounded-3 text-start position-relative cursor-pointer" id="ship-std-card">
+                                <input class="form-check-input position-absolute top-15 end-15" type="radio" asp-for="ShippingMethod" value="Standard" id="ship-std" checked onchange="updateShippingCost()" />
+                                <label class="form-check-label d-block cursor-pointer" for="ship-std">
+                                    <div class="fw-bold text-dark mb-1"><i class="bi bi-truck me-1"></i>Giao Hàng Tiêu Chuẩn</div>
+                                    <span class="text-muted small">Thời gian nhận hàng: 3-5 ngày</span>
+                                    <div class="text-danger fw-bold mt-2" id="ship-std-cost">
+                                        @(subTotal >= 200 || couponCode == "FREESHIP" ? "Miễn phí ($0.00)" : "$15.00")
+                                    </div>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-6">
+                            <div class="form-check card-radio p-3 border rounded-3 text-start position-relative cursor-pointer" id="ship-exp-card">
+                                <input class="form-check-input position-absolute top-15 end-15" type="radio" asp-for="ShippingMethod" value="Express" id="ship-exp" onchange="updateShippingCost()" />
+                                <label class="form-check-label d-block cursor-pointer" for="ship-exp">
+                                    <div class="fw-bold text-dark mb-1"><i class="bi bi-lightning-charge-fill me-1 text-warning"></i>Giao Hàng Nhanh Hỏa Tốc</div>
+                                    <span class="text-muted small">Thời gian nhận hàng: 1-2 ngày</span>
+                                    <div class="text-danger fw-bold mt-2">$30.00</div>
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- 3. Payment Methods -->
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white">
+                    <h5 class="fw-bold mb-3 text-dark">
+                        <span class="badge bg-primary rounded-circle me-2" style="padding: 5px 10px;">3</span>Phương Thức Thanh Toán
+                    </h5>
+                    <div class="row g-3">
+                        <div class="col-md-4">
+                            <div class="form-check card-radio p-3 border rounded-3 text-center cursor-pointer" id="pay-card-card">
+                                <input class="form-check-input d-none" type="radio" asp-for="PaymentMethod" value="CreditCard" id="pay-card" checked onchange="highlightPayment()" />
+                                <label class="form-check-label d-block cursor-pointer" for="pay-card">
+                                    <i class="bi bi-credit-card-2-front fs-2 text-primary d-block mb-2"></i>
+                                    <span class="fw-bold text-dark small">Thẻ tín dụng / Ghi nợ</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-check card-radio p-3 border rounded-3 text-center cursor-pointer" id="pay-wallet-card">
+                                <input class="form-check-input d-none" type="radio" asp-for="PaymentMethod" value="DigitalWallet" id="pay-wallet" onchange="highlightPayment()" />
+                                <label class="form-check-label d-block cursor-pointer" for="pay-wallet">
+                                    <i class="bi bi-phone-vibrate fs-2 text-success d-block mb-2"></i>
+                                    <span class="fw-bold text-dark small">Ví điện tử</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="col-md-4">
+                            <div class="form-check card-radio p-3 border rounded-3 text-center cursor-pointer" id="pay-bank-card">
+                                <input class="form-check-input d-none" type="radio" asp-for="PaymentMethod" value="BankTransfer" id="pay-bank" onchange="highlightPayment()" />
+                                <label class="form-check-label d-block cursor-pointer" for="pay-bank">
+                                    <i class="bi bi-bank fs-2 text-warning d-block mb-2"></i>
+                                    <span class="fw-bold text-dark small">Chuyển khoản Ngân hàng</span>
+                                </label>
+                            </div>
+                        </div>
                     </div>
 
-                    <!-- ShippingAddress -->
-                    <div class="mb-3">
-                        <label asp-for="ShippingAddress" class="form-label fw-semibold small text-secondary">Địa chỉ giao hàng chi tiết</label>
-                        <input asp-for="ShippingAddress" class="form-control py-2.5 rounded-3" placeholder="Số nhà, Tên đường, Phường, Quận, Thành phố" />
-                        <span asp-validation-for="ShippingAddress" class="text-danger small"></span>
-                    </div>
-
-                    <!-- Notes -->
-                    <div class="mb-3">
-                        <label asp-for="Notes" class="form-label fw-semibold small text-secondary">Ghi chú giao hàng (Không bắt buộc)</label>
-                        <textarea asp-for="Notes" class="form-control rounded-3" rows="3" placeholder="Ví dụ: Giao hàng giờ hành chính, gọi trước khi giao..."></textarea>
-                        <span asp-validation-for="Notes" class="text-danger small"></span>
+                    <!-- Payment instructions depending on choice -->
+                    <div class="mt-4 p-3 bg-light rounded-3 small text-secondary" id="payment-instructions">
+                        <i class="bi bi-info-circle-fill text-primary me-1"></i>
+                        <span>Bạn sẽ nhập thông tin bảo mật thẻ tín dụng Visa/Mastercard trực tiếp ở bước xác nhận cuối cùng.</span>
                     </div>
                 </div>
             </div>
 
-            <!-- Cart items summary -->
-            <div class="col-12 col-lg-5">
-                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white mb-4">
-                    <h5 class="fw-bold mb-3 border-bottom pb-2">Tóm Tắt Đơn Hàng</h5>
+            <!-- Right Side: Order Summary & Review -->
+            <div class="col-12 col-lg-4">
+                <div class="card border-0 shadow-sm rounded-4 p-4 bg-white sticky-lg-top" style="top: 90px; z-index: 10;">
+                    <h5 class="fw-bold mb-3 border-bottom pb-2 text-dark">Tóm Tắt Hóa Đơn</h5>
 
+                    <!-- Products brief -->
                     <div class="checkout-items-list mb-3" style="max-height: 250px; overflow-y: auto;">
                         @foreach (var item in cartItems)
                         {
                             <div class="d-flex align-items-center gap-3 pb-3 mb-3 border-bottom">
-                                <img src="@item.ProductImage" alt="@item.ProductName" class="rounded border p-1" style="width: 50px; height: 50px; object-fit: contain;" />
-                                <div class="flex-grow-1">
-                                    <h6 class="mb-0 fw-bold small text-truncate" style="max-width: 180px;">@item.ProductName</h6>
-                                    <span class="text-danger small fw-semibold">@item.Price.ToString("N2") $ <span class="text-muted">x@item.Quantity</span></span>
+                                <img src="@item.ProductImage" alt="@item.ProductName" class="rounded border p-1" style="width: 45px; height: 45px; object-fit: contain;" />
+                                <div class="flex-grow-1 min-width-0">
+                                    <h6 class="mb-0 fw-bold small text-truncate" style="max-width: 170px;">@item.ProductName</h6>
+                                    <span class="text-danger small fw-semibold">$@item.Price.ToString("N2") <span class="text-muted">x@item.Quantity</span></span>
                                 </div>
-                                <span class="fw-bold text-dark font-13">@item.TotalPrice.ToString("N2") $</span>
+                                <span class="fw-bold text-dark small">$@item.TotalPrice.ToString("N2")</span>
                             </div>
                         }
                     </div>
 
-                    <div class="d-flex justify-content-between mb-4 border-top pt-3 fs-5 fw-extrabold text-danger">
-                        <span>Tổng thanh toán:</span>
-                        <span>@cartItems.Sum(i => i.TotalPrice).ToString("N2") $</span>
+                    <!-- Invoice Breakdown -->
+                    <div class="invoice-summary small text-secondary">
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Tiền hàng:</span>
+                            <span class="fw-semibold text-dark">$@subTotal.ToString("N2")</span>
+                        </div>
+                        <div class="d-flex justify-content-between mb-2">
+                            <span>Phí vận chuyển:</span>
+                            <span class="fw-semibold text-dark" id="display-shipping-fee">$@shippingFee.ToString("N2")</span>
+                        </div>
+
+                        @if (discount > 0)
+                        {
+                            <div class="d-flex justify-content-between mb-2">
+                                <span>Giảm giá (@couponCode):</span>
+                                <span class="fw-bold text-success">-$@discount.ToString("N2")</span>
+                            </div>
+                        }
+
+                        <hr class="my-3" />
+
+                        <div class="d-flex justify-content-between mb-4 align-items-center fs-5 text-dark">
+                            <span class="fw-bold fs-6">Tổng cộng:</span>
+                            <span class="fw-extrabold text-danger fs-5" id="display-grand-total">$@grandTotal.ToString("N2")</span>
+                        </div>
                     </div>
 
-                    <button type="submit" class="btn btn-primary w-100 py-3 rounded-3 fw-bold shadow">
-                        XÁC NHẬN ĐẶT HÀNG
+                    <!-- Order Confirmation -->
+                    <button type="submit" class="btn btn-primary w-100 py-3 rounded-3 fw-bold shadow-sm mb-3">
+                        <i class="bi bi-shield-check-fill me-1"></i> XÁC NHẬN ĐẶT HÀNG
                     </button>
+                    
+                    <p class="text-center text-muted small mb-0">Bằng cách nhấp vào nút đặt hàng, bạn đồng ý với Điều khoản mua bán của TechStore.</p>
                 </div>
-
-                <a class="btn btn-outline-secondary w-100 py-2.5 rounded-3 fw-bold font-13" asp-action="Index">
-                    <i class="bi bi-arrow-left me-2"></i>Quay lại giỏ hàng
-                </a>
             </div>
         </div>
     </form>
@@ -78,4 +230,161 @@
 
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
+    
+    <script>
+        // Vietnam location dataset mapping
+        const vietnamLocations = {
+            "Hành chính cấp Tỉnh": {
+                "Hà Nội": {
+                    "Quận Ba Đình": ["Phường Cống Vị", "Phường Điện Biên", "Phường Kim Mã", "Phường Giảng Võ"],
+                    "Quận Hoàn Kiếm": ["Phường Cửa Đông", "Phường Cửa Nam", "Phường Hàng Bạc", "Phường Hàng Bài"],
+                    "Quận Cầu Giấy": ["Phường Dịch Vọng", "Phường Mai Dịch", "Phường Nghĩa Tân", "Phường Quan Hoa"],
+                    "Quận Đống Đa": ["Phường Cát Linh", "Phường Hàng Bột", "Phường Khương Thượng", "Phường Láng Hạ"]
+                },
+                "TP. Hồ Chí Minh": {
+                    "Quận 1": ["Phường Bến Nghé", "Phường Bến Thành", "Phường Cầu Ông Lãnh", "Phường Nguyễn Cư Trinh"],
+                    "Quận 3": ["Phường Võ Thị Sáu", "Phường 1", "Phường 2", "Phường 3"],
+                    "Quận Bình Thạnh": ["Phường 1", "Phường 2", "Phường 3", "Phường Hàng Xanh"],
+                    "Thành phố Thủ Đức": ["Phường Bình Thọ", "Phường Linh Tây", "Phường Thảo Điền", "Phường An Khánh"]
+                },
+                "Đà Nẵng": {
+                    "Quận Hải Châu": ["Phường Hải Châu I", "Phường Hải Châu II", "Phường Thạch Thang", "Phường Hòa Thuận Đông"],
+                    "Quận Thanh Khê": ["Phường An Khê", "Phường Chính Gián", "Phường Thạc Gián", "Phường Vĩnh Trung"],
+                    "Quận Sơn Trà": ["Phường An Hải Bắc", "Phường An Hải Đông", "Phường Phước Mỹ", "Phường Thọ Quang"]
+                },
+                "Cần Thơ": {
+                    "Quận Ninh Kiều": ["Phường An Cư", "Phường An Hòa", "Phường An Khánh", "Phường Tân An"],
+                    "Quận Cái Răng": ["Phường Ba Láng", "Phường Hưng Phú", "Phường Hưng Thạnh", "Phường Lê Bình"]
+                },
+                "Hải Phòng": {
+                    "Quận Hồng Bàng": ["Phường Hạ Lý", "Phường Hoàng Văn Thụ", "Phường Minh Khai", "Phường Thượng Lý"],
+                    "Quận Lê Chân": ["Phường An Biên", "Phường Cát Dài", "Phường Hàng Kênh", "Phường Kênh Dương"]
+                }
+            }
+        };
+
+        $(document).ready(function() {
+            // Load provinces list
+            const provinces = Object.keys(vietnamLocations["Hành chính cấp Tỉnh"]);
+            const $provSelect = $('#province-select');
+            
+            provinces.forEach(function(prov) {
+                $provSelect.append($('<option>', { value: prov, text: prov }));
+            });
+
+            // Province change event
+            $provSelect.change(function() {
+                const prov = $(this).val();
+                const $distSelect = $('#district-select');
+                const $wardSelect = $('#ward-select');
+
+                $distSelect.empty().append('<option value="">-- Chọn Quận/Huyện --</option>').prop('disabled', true);
+                $wardSelect.empty().append('<option value="">-- Chọn Phường/Xã --</option>').prop('disabled', true);
+
+                if (prov) {
+                    const districts = Object.keys(vietnamLocations["Hành chính cấp Tỉnh"][prov]);
+                    districts.forEach(function(dist) {
+                        $distSelect.append($('<option>', { value: dist, text: dist }));
+                    });
+                    $distSelect.prop('disabled', false);
+                }
+            });
+
+            // District change event
+            $('#district-select').change(function() {
+                const prov = $('#province-select').val();
+                const dist = $(this).val();
+                const $wardSelect = $('#ward-select');
+
+                $wardSelect.empty().append('<option value="">-- Chọn Phường/Xã --</option>').prop('disabled', true);
+
+                if (prov && dist) {
+                    const wards = vietnamLocations["Hành chính cấp Tỉnh"][prov][dist];
+                    wards.forEach(function(ward) {
+                        $wardSelect.append($('<option>', { value: ward, text: ward }));
+                    });
+                    $wardSelect.prop('disabled', false);
+                }
+            });
+
+            // Highlight initial states
+            highlightPayment();
+            highlightShipping();
+        });
+
+        // Update shipping cost on delivery selection change
+        function updateShippingCost() {
+            const isExpress = $('#ship-exp').is(':checked');
+            const subtotal = parseFloat($('#hidden-subtotal').val());
+            const discount = parseFloat($('#hidden-discount').val());
+            const isFreeshipCoupon = "@couponCode" === "FREESHIP";
+
+            let shippingFee = 0;
+            if (isExpress) {
+                shippingFee = 30.00;
+            } else {
+                // Free shipping if subtotal >= 200 or FREESHIP coupon applied
+                shippingFee = (subtotal >= 200 || isFreeshipCoupon) ? 0.00 : 15.00;
+            }
+
+            // Update DOM billing elements
+            $('#hidden-shipping-fee').val(shippingFee);
+            $('#display-shipping-fee').text('$' + shippingFee.toFixed(2));
+
+            const newTotal = Math.max(0, subtotal + shippingFee - discount);
+            $('#hidden-grand-total').val(newTotal);
+            $('#display-grand-total').text('$' + newTotal.toFixed(2));
+
+            highlightShipping();
+        }
+
+        // Visual highlights for checked shipping cards
+        function highlightShipping() {
+            if ($('#ship-std').is(':checked')) {
+                $('#ship-std-card').addClass('border-primary bg-primary bg-opacity-5');
+                $('#ship-exp-card').removeClass('border-primary bg-primary bg-opacity-5');
+            } else {
+                $('#ship-exp-card').addClass('border-primary bg-primary bg-opacity-5');
+                $('#ship-std-card').removeClass('border-primary bg-primary bg-opacity-5');
+            }
+        }
+
+        // Highlight selected payment card and change helper instructions
+        function highlightPayment() {
+            $('.card-radio').removeClass('border-primary bg-primary bg-opacity-5');
+            
+            let text = "";
+            if ($('#pay-card').is(':checked')) {
+                $('#pay-card-card').addClass('border-primary bg-primary bg-opacity-5');
+                text = '<i class="bi bi-info-circle-fill text-primary me-1"></i> Bạn sẽ nhập thông tin bảo mật thẻ tín dụng Visa/Mastercard trực tiếp ở bước xác nhận cuối cùng.';
+            } else if ($('#pay-wallet').is(':checked')) {
+                $('#pay-wallet-card').addClass('border-primary bg-primary bg-opacity-5');
+                text = '<i class="bi bi-info-circle-fill text-primary me-1"></i> Hệ thống sẽ chuyển hướng sang cổng ví điện tử MoMo/ZaloPay qua mã QR thanh toán sau khi đặt hàng.';
+            } else if ($('#pay-bank').is(':checked')) {
+                $('#pay-bank-card').addClass('border-primary bg-primary bg-opacity-5');
+                text = '<i class="bi bi-info-circle-fill text-primary me-1"></i> Quý khách chuyển khoản vào tài khoản TechStore: <b>0123-456-789 (Vietcombank)</b>, ghi kèm nội dung: <i>TechStore [Số ĐT Khách]</i>.';
+            }
+            
+            $('#payment-instructions').html(text);
+        }
+    </script>
+
+    <style>
+        .cursor-pointer {
+            cursor: pointer;
+        }
+        .card-radio {
+            transition: all 0.2s ease-in-out;
+        }
+        .card-radio:hover {
+            border-color: #6c5ce7;
+            transform: translateY(-2px);
+        }
+        .top-15 {
+            top: 15px;
+        }
+        .end-15 {
+            right: 15px;
+        }
+    </style>
 }

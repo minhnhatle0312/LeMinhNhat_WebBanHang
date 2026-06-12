@@ -2,51 +2,147 @@
 @{
     ViewData["Title"] = "Hồ Sơ Cá Nhân";
     var orders = ViewBag.Orders as List<LeMinhNhat_WebBanHang.Models.Order> ?? new List<LeMinhNhat_WebBanHang.Models.Order>();
+
+    // Membership Tier Calculations
+    string rank = Model.MembershipRank ?? "Đồng";
+    int points = Model.LoyaltyPoints;
+    string nextRank = "";
+    int pointsNeeded = 0;
+    int currentMin = 0;
+    int nextMin = 0;
+    string tierColor = "bg-secondary";
+    string tierIcon = "bi-shield-fill text-muted";
+
+    if (points < 500)
+    {
+        rank = "Đồng";
+        nextRank = "Bạc";
+        pointsNeeded = 500 - points;
+        currentMin = 0;
+        nextMin = 500;
+        tierColor = "bg-bronze";
+        tierIcon = "bi-shield-fill text-bronze";
+    }
+    else if (points >= 500 && points < 1500)
+    {
+        rank = "Bạc";
+        nextRank = "Vàng";
+        pointsNeeded = 1500 - points;
+        currentMin = 500;
+        nextMin = 1500;
+        tierColor = "bg-silver";
+        tierIcon = "bi-shield-fill text-silver";
+    }
+    else if (points >= 1500 && points < 3000)
+    {
+        rank = "Vàng";
+        nextRank = "Kim Cương";
+        pointsNeeded = 3000 - points;
+        currentMin = 1500;
+        nextMin = 3000;
+        tierColor = "bg-warning text-dark";
+        tierIcon = "bi-shield-fill text-warning";
+    }
+    else
+    {
+        rank = "Kim Cương";
+        nextRank = "Tối Đa";
+        pointsNeeded = 0;
+        currentMin = 3000;
+        nextMin = 3000;
+        tierColor = "bg-info text-white";
+        tierIcon = "bi-gem text-info";
+    }
+
+    double progressPct = 100.0;
+    if (nextMin > currentMin)
+    {
+        progressPct = ((double)(points - currentMin) / (nextMin - currentMin)) * 100.0;
+        progressPct = Math.Min(100.0, Math.Max(0.0, progressPct));
+    }
 }
 
 <div class="container py-5">
-    <!-- Success/Error Toast Message Alerts -->
+    <!-- Notifications -->
     @if (TempData["Success"] != null)
     {
-        <div class="alert alert-success alert-dismissible fade show rounded-3 shadow-sm mb-4" role="alert">
-            <i class="bi bi-check-circle-fill me-2"></i>@TempData["Success"]
+        <div class="alert alert-success alert-dismissible fade show rounded-4 border-0 shadow-sm p-3 mb-4 animate__animated animate__fadeIn" role="alert">
+            <i class="bi bi-check-circle-fill me-2 fs-5"></i>@TempData["Success"]
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
     @if (TempData["Error"] != null)
     {
-        <div class="alert alert-danger alert-dismissible fade show rounded-3 shadow-sm mb-4" role="alert">
-            <i class="bi bi-exclamation-triangle-fill me-2"></i>@TempData["Error"]
+        <div class="alert alert-danger alert-dismissible fade show rounded-4 border-0 shadow-sm p-3 mb-4" role="alert">
+            <i class="bi bi-exclamation-triangle-fill me-2 fs-5"></i>@TempData["Error"]
             <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
         </div>
     }
 
     <div class="row g-4">
-        <!-- Sidebar Account Card -->
-        <div class="col-12 col-lg-4">
-            <div class="card border-0 shadow-sm rounded-4 text-center p-4 bg-white">
+        <!-- Sidebar Account & Membership Card -->
+        <div class="col-12 col-lg-4 animate__animated animate__fadeInLeft">
+            <div class="card border-0 shadow-sm rounded-4 text-center p-4 bg-white mb-4">
                 <div class="position-relative d-inline-block mx-auto mb-3">
                     @if (!string.IsNullOrEmpty(Model.ProfilePictureUrl))
                     {
-                        <img src="@Model.ProfilePictureUrl" alt="@Model.FullName" class="rounded-circle border border-4 border-primary" style="width: 120px; height: 120px; object-fit: cover;" />
+                        <img src="@Model.ProfilePictureUrl" alt="@Model.FullName" class="rounded-circle border border-4 border-light shadow" style="width: 125px; height: 125px; object-fit: cover;" />
                     }
                     else
                     {
-                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold border border-4 border-light mx-auto" style="width: 120px; height: 120px; font-size: 36px;">
+                        <div class="bg-primary text-white rounded-circle d-flex align-items-center justify-content-center fw-bold border border-4 border-light shadow mx-auto" style="width: 125px; height: 125px; font-size: 36px;">
                             @(Model.FullName?.Substring(0, Math.Min(Model.FullName.Length, 2)).ToUpper() ?? "US")
                         </div>
                     }
                 </div>
-                <h4 class="fw-bold mb-1">@Model.FullName</h4>
+                <h4 class="fw-bold mb-1 text-dark">@Model.FullName</h4>
                 <p class="text-muted small mb-3">@Model.Email</p>
-                <div class="badge bg-light text-primary border px-3 py-2 rounded-pill mb-2 small fw-semibold">
+                <div class="badge bg-light text-secondary border px-3 py-2 rounded-pill mb-2 small fw-semibold">
                     <i class="bi bi-calendar3 me-1"></i>Thành viên từ: @Model.AccountCreatedAt.ToString("dd/MM/yyyy")
                 </div>
+            </div>
+
+            <!-- Membership Rank & Loyalty Card -->
+            <div class="card border-0 shadow-sm rounded-4 p-4 text-white position-relative overflow-hidden mb-4" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);">
+                <!-- Abstract glowing decor elements -->
+                <div class="position-absolute bg-primary rounded-circle opacity-10" style="width: 200px; height: 200px; top: -100px; right: -100px; filter: blur(30px);"></div>
+                <div class="position-absolute bg-warning rounded-circle opacity-10" style="width: 150px; height: 150px; bottom: -80px; left: -50px; filter: blur(20px);"></div>
+
+                <div class="d-flex align-items-center justify-content-between mb-3 position-relative">
+                    <h5 class="fw-bold mb-0 text-white-50 small tracking-wider">HẠNG THÀNH VIÊN</h5>
+                    <i class="bi @tierIcon fs-4"></i>
+                </div>
+
+                <h3 class="fw-extrabold mb-1">Hạng @rank</h3>
+                <p class="small text-white-50 mb-4">Điểm tích lũy: <b class="text-white">@points</b> điểm</p>
+
+                @if (pointsNeeded > 0)
+                {
+                    <div class="mb-2 d-flex justify-content-between small text-white-50">
+                        <span>Tiến độ lên hạng @nextRank</span>
+                        <span>@points / @nextMin</span>
+                    </div>
+                    <div class="progress bg-secondary bg-opacity-20 rounded-pill mb-3" style="height: 8px;">
+                        <div class="progress-bar bg-warning rounded-pill" role="progressbar" style="width: @(progressPct)%;" aria-valuenow="@progressPct" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <p class="small text-white-50 mb-0"><i class="bi bi-stars text-warning me-1"></i>Tích lũy thêm <b>@pointsNeeded</b> điểm để thăng hạng <b>@nextRank</b>.</p>
+                }
+                else
+                {
+                    <div class="mb-2 d-flex justify-content-between small text-white-50">
+                        <span>Hạng Cao Nhất Đạt Được</span>
+                        <span>@points điểm</span>
+                    </div>
+                    <div class="progress bg-secondary bg-opacity-20 rounded-pill mb-3" style="height: 8px;">
+                        <div class="progress-bar bg-info rounded-pill" role="progressbar" style="width: 100%;" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100"></div>
+                    </div>
+                    <p class="small text-white-50 mb-0"><i class="bi bi-gem text-info me-1"></i>Bạn đang sở hữu cấp độ thành viên VIP nhất của TechStore!</p>
+                }
             </div>
         </div>
 
         <!-- Detail Information & Order History -->
-        <div class="col-12 col-lg-8">
+        <div class="col-12 col-lg-8 animate__animated animate__fadeInRight">
             <div class="card border-0 shadow-sm rounded-4 bg-white p-4 p-md-5 mb-4">
                 <h5 class="fw-bold mb-4 border-bottom pb-2 text-dark"><i class="bi bi-gear-fill me-2 text-primary"></i>Cấu Hình Thông Tin Cá Nhân</h5>
 
@@ -54,19 +150,19 @@
                     <div class="row g-3">
                         <div class="col-md-6">
                             <label class="form-label fw-semibold small text-secondary">Họ và tên</label>
-                            <input name="fullName" type="text" class="form-control py-2.5 rounded-3" value="@Model.FullName" required />
+                            <input name="fullName" type="text" class="form-control py-2.5 rounded-3 shadow-none" value="@Model.FullName" required />
                         </div>
                         <div class="col-md-6">
                             <label class="form-label fw-semibold small text-secondary">Tuổi của bạn</label>
-                            <input name="age" type="number" class="form-control py-2.5 rounded-3" value="@Model.Age" min="1" max="120" />
+                            <input name="age" type="number" class="form-control py-2.5 rounded-3 shadow-none" value="@Model.Age" min="1" max="120" />
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-semibold small text-secondary">Địa chỉ giao hàng mặc định</label>
-                            <input name="address" type="text" class="form-control py-2.5 rounded-3" value="@Model.Address" />
+                            <input name="address" type="text" class="form-control py-2.5 rounded-3 shadow-none" value="@Model.Address" />
                         </div>
                         <div class="col-12">
                             <label class="form-label fw-semibold small text-secondary">Cập nhật ảnh đại diện</label>
-                            <input name="profilePicture" class="form-control" type="file" accept="image/*" />
+                            <input name="profilePicture" class="form-control shadow-none" type="file" accept="image/*" />
                         </div>
                     </div>
                     <button type="submit" class="btn btn-primary px-4 py-2.5 rounded-3 fw-bold mt-4 shadow-sm">
@@ -82,45 +178,60 @@
                 @if (orders != null && orders.Any())
                 {
                     <div class="table-responsive">
-                        <table class="table table-hover align-middle">
+                        <table class="table table-hover align-middle mb-0">
                             <thead class="table-light">
-                                <tr class="small text-secondary">
+                                <tr class="small text-secondary fw-bold text-uppercase">
                                     <th>Mã Đơn</th>
                                     <th>Ngày Đặt</th>
-                                    <th>Địa Chỉ</th>
-                                    <th>Tổng Tiền</th>
+                                    <th>Giá Trị</th>
                                     <th>Trạng Thái</th>
+                                    <th class="text-end">Hành Động</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach (var order in orders)
                                 {
                                     <tr>
-                                        <td class="fw-bold">#@order.Id</td>
-                                        <td>@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
-                                        <td class="text-truncate" style="max-width: 150px;">@order.ShippingAddress</td>
-                                        <td class="fw-bold text-danger">@order.TotalAmount.ToString("N2") $</td>
+                                        <td class="fw-bold text-dark">#@order.Id</td>
+                                        <td class="small text-secondary">@order.OrderDate.ToString("dd/MM/yyyy HH:mm")</td>
+                                        <td class="fw-bold text-danger">$@order.TotalAmount.ToString("N2")</td>
                                         <td>
                                             @if (order.Status == "Pending")
                                             {
                                                 <span class="badge bg-warning text-dark px-2.5 py-1.5 rounded-pill small">Chờ Duyệt</span>
                                             }
-                                            else if (order.Status == "Approved")
+                                            else if (order.Status == "Approved" || order.Status == "Confirmed")
                                             {
                                                 <span class="badge bg-info text-white px-2.5 py-1.5 rounded-pill small">Đã Duyệt</span>
                                             }
                                             else if (order.Status == "Shipped")
                                             {
-                                                <span class="badge bg-primary text-white px-2.5 py-1.5 rounded-pill small">Đang Giao</span>
+                                                <span class="badge bg-primary text-white px-2.5 py-1.5 rounded-pill small">Đã Gửi Hàng</span>
                                             }
-                                            else if (order.Status == "Completed")
+                                            else if (order.Status == "Shipping" || order.Status == "Delivering")
                                             {
-                                                <span class="badge bg-success text-white px-2.5 py-1.5 rounded-pill small">Hoàn Thành</span>
+                                                <span class="badge bg-primary text-white px-2.5 py-1.5 rounded-pill small">Đang Vận Chuyển</span>
+                                            }
+                                            else if (order.Status == "Completed" || order.Status == "Delivered")
+                                            {
+                                                <span class="badge bg-success text-white px-2.5 py-1.5 rounded-pill small">Đã Giao</span>
                                             }
                                             else if (order.Status == "Cancelled")
                                             {
                                                 <span class="badge bg-danger text-white px-2.5 py-1.5 rounded-pill small">Đã Hủy</span>
                                             }
+                                        </td>
+                                        <td class="text-end">
+                                            <div class="d-flex align-items-center justify-content-end gap-2">
+                                                <a asp-action="OrderDetails" asp-route-id="@order.Id" class="btn btn-sm btn-outline-primary py-1 px-2.5 rounded-3 fw-bold small">
+                                                    <i class="bi bi-eye-fill"></i> Chi Tiết
+                                                </a>
+                                                <form asp-controller="Cart" asp-action="ReOrder" asp-route-orderId="@order.Id" method="post" class="d-inline">
+                                                    <button type="submit" class="btn btn-sm btn-success py-1 px-2.5 rounded-3 fw-bold text-white small">
+                                                        <i class="bi bi-arrow-repeat"></i> Đặt Lại
+                                                    </button>
+                                                </form>
+                                            </div>
                                         </td>
                                     </tr>
                                 }
@@ -139,3 +250,18 @@
         </div>
     </div>
 </div>
+
+<style>
+    .text-bronze {
+        color: #cd7f32 !important;
+    }
+    .bg-bronze {
+        background-color: #cd7f32 !important;
+    }
+    .text-silver {
+        color: #c0c0c0 !important;
+    }
+    .bg-silver {
+        background-color: #a0a0a0 !important;
+    }
+</style>

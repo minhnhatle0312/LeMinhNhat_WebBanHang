@@ -154,6 +154,11 @@
                     <div class="menu-group-title">Bản điều khiển</div>
                     <ul class="admin-v-menu">
                         <li>
+                            <a class="menu-item-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "Dashboard" ? "active" : "")" asp-area="Admin" asp-controller="Dashboard" asp-action="Index">
+                                <span><i class="bi bi-graph-up-arrow"></i> Dashboard Doanh Thu</span>
+                            </a>
+                        </li>
+                        <li>
                             <a class="menu-item-link @(ViewContext.RouteData.Values["Controller"]?.ToString() == "ProductManager" && ViewContext.RouteData.Values["Action"]?.ToString() == "Index" ? "active" : "")" asp-area="Admin" asp-controller="ProductManager" asp-action="Index">
                                 <span><i class="bi bi-box-seam-fill"></i> Quản Lý Sản Phẩm</span>
                             </a>

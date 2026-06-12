@@ -38,6 +38,33 @@ namespace LeMinhNhat_WebBanHang.Models
         [StringLength(50)]
         public string Status { get; set; } = "Pending"; // Pending, Approved, Shipped, Cancelled, Completed
 
+        [StringLength(100)]
+        public string? ReceiverName { get; set; }
+
+        [StringLength(50)]
+        public string? PaymentMethod { get; set; }
+
+        [StringLength(50)]
+        public string? ShippingMethod { get; set; }
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal ShippingFee { get; set; } = 0;
+
+        [Column(TypeName = "decimal(18,2)")]
+        public decimal DiscountAmount { get; set; } = 0;
+
+        [StringLength(50)]
+        public string? CouponCode { get; set; }
+
+        [StringLength(100)]
+        public string? Province { get; set; }
+
+        [StringLength(100)]
+        public string? District { get; set; }
+
+        [StringLength(100)]
+        public string? Ward { get; set; }
+
         public ICollection<OrderDetail> OrderDetails { get; set; } = new List<OrderDetail>();
     }
 }

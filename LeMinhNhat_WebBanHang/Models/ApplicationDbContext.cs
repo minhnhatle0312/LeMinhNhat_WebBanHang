@@ -22,6 +22,9 @@ namespace LeMinhNhat_WebBanHang.DataAccess // Khuyên dùng .DataAccess để đ
         // Định nghĩa các thực thể đơn hàng
         public DbSet<Order> Orders { get; set; }
         public DbSet<OrderDetail> OrderDetails { get; set; }
+        
+        // Định nghĩa tập hợp thực thể (Bảng) Mã giảm giá
+        public DbSet<Coupon> Coupons { get; set; }
 
         // Cấu hình Fluent API (Tùy biến bảng, thiết lập ràng buộc và tạo dữ liệu mẫu nếu cần)
         protected override void OnModelCreating(ModelBuilder modelBuilder)
@@ -104,6 +107,51 @@ namespace LeMinhNhat_WebBanHang.DataAccess // Khuyên dùng .DataAccess để đ
                     .HasForeignKey(od => od.ProductId)
                     .OnDelete(DeleteBehavior.Restrict);
             });
+
+            // 6. Cấu hình và Seed data cho bảng Coupons
+            modelBuilder.Entity<Coupon>(entity =>
+            {
+                entity.ToTable("Coupons");
+                entity.HasKey(c => c.Id);
+                entity.Property(c => c.Code).IsRequired().HasMaxLength(50);
+                entity.Property(c => c.DiscountType).IsRequired().HasMaxLength(20);
+            });
+
+            modelBuilder.Entity<Coupon>().HasData(
+                new Coupon
+                {
+                    Id = 1,
+                    Code = "WELCOME10",
+                    Description = "Giảm trực tiếp $10 cho đơn hàng từ $50",
+                    DiscountValue = 10.00m,
+                    DiscountType = "FixedAmount",
+                    MinimumOrderAmount = 50.00m,
+                    ExpiryDate = DateTime.Now.AddYears(1),
+                    IsActive = true
+                },
+                new Coupon
+                {
+                    Id = 2,
+                    Code = "GIAM20",
+                    Description = "Giảm 20% cho đơn hàng từ $100",
+                    DiscountValue = 20.00m,
+                    DiscountType = "Percentage",
+                    MinimumOrderAmount = 100.00m,
+                    ExpiryDate = DateTime.Now.AddYears(1),
+                    IsActive = true
+                },
+                new Coupon
+                {
+                    Id = 3,
+                    Code = "FREESHIP",
+                    Description = "Miễn phí vận chuyển cho đơn hàng từ $200",
+                    DiscountValue = 15.00m, // Giảm tối đa $15 phí vận chuyển
+                    DiscountType = "FixedAmount",
+                    MinimumOrderAmount = 200.00m,
+                    ExpiryDate = DateTime.Now.AddYears(1),
+                    IsActive = true
+                }
+            );
         }
     }
 }
