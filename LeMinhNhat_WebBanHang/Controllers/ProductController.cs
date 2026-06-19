@@ -1,4 +1,4 @@
-﻿using LeMinhNhat_WebBanHang.Models;
+using LeMinhNhat_WebBanHang.Models;
 using LeMinhNhat_WebBanHang.Repositories;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -22,8 +22,7 @@ namespace LeMinhNhat_WebBanHang.Controllers
 
         public IActionResult Index()
         {
-            var products = _productRepository.GetAll();
-            return View(products);
+            return View();
         }
 
         public IActionResult Add()

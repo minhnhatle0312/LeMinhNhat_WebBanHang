@@ -4,18 +4,79 @@ using Microsoft.EntityFrameworkCore;
 using LeMinhNhat_WebBanHang.DataAccess;
 using LeMinhNhat_WebBanHang.Models;
 using LeMinhNhat_WebBanHang.Repositories;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using System.Text;
+using Microsoft.OpenApi.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // 1. Tích hợp Controllers & Razor Pages cho Identity UI hoạt động độc lập
 builder.Services.AddControllersWithViews();
 builder.Services.AddRazorPages();
+
 // Enable Session for shopping cart and transient UI state
 builder.Services.AddSession(options =>
 {
     options.IdleTimeout = TimeSpan.FromMinutes(60);
     options.Cookie.HttpOnly = true;
     options.Cookie.IsEssential = true;
+});
+
+// Configure JWT Bearer Authentication
+var jwtKey = builder.Configuration["Jwt:Key"] ?? "SuperSecretKeyForJWTAuthLeMinhNhatWebBanHang2026!";
+var jwtIssuer = builder.Configuration["Jwt:Issuer"] ?? "LeMinhNhat_WebBanHang_Backend";
+var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "LeMinhNhat_WebBanHang_Clients";
+
+builder.Services.AddAuthentication()
+    .AddJwtBearer(JwtBearerDefaults.AuthenticationScheme, options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = jwtIssuer,
+            ValidAudience = jwtAudience,
+            IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(jwtKey))
+        };
+    });
+
+// Configure Swagger API documentation with JWT Bearer support
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo
+    {
+        Title = "LeMinhNhat WebBanHang API Gateway",
+        Version = "v1",
+        Description = "Hệ thống RESTful API kết nối Frontend và Mobile App"
+    });
+
+    c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+    {
+        Description = "Nhập token JWT theo định dạng: Bearer {your_token}",
+        Name = "Authorization",
+        In = ParameterLocation.Header,
+        Type = SecuritySchemeType.ApiKey,
+        Scheme = "Bearer"
+    });
+
+    c.AddSecurityRequirement(new OpenApiSecurityRequirement
+    {
+        {
+            new OpenApiSecurityScheme
+            {
+                Reference = new OpenApiReference
+                {
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
+                }
+            },
+            new string[] {}
+        }
+    });
 });
 
 // 2. Kết nối Database Laragon MySQL / SQL Server
@@ -33,20 +94,23 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(options => {
 .AddEntityFrameworkStores<ApplicationDbContext>()
 .AddDefaultTokenProviders();
 
-// Cấu hình đường dẫn điều phối khi người dùng chưa đăng nhập hoặc bị từ chối truy cập
-builder.Services.ConfigureApplicationCookie(options => {
-    options.LoginPath = $"/Identity/Account/Login";
-    options.LogoutPath = $"/Identity/Account/Logout";
-    options.AccessDeniedPath = $"/Identity/Account/AccessDenied";
-});
-
-// Đăng ký kiến trúc Repository hiện tại của bạn (Sử dụng Entity Framework)
+// Đăng ký tầng Repository (DI Container)
 builder.Services.AddScoped<IProductRepository, EFProductRepository>();
 builder.Services.AddScoped<ICategoryRepository, EFCategoryRepository>();
 
 var app = builder.Build();
 
-if (!app.Environment.IsDevelopment())
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
+{
+    app.UseDeveloperExceptionPage();
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "LeMinhNhat WebBanHang API v1");
+    });
+}
+else
 {
     app.UseExceptionHandler("/Home/Error");
     app.UseHsts();
@@ -57,30 +121,12 @@ app.UseStaticFiles();
 
 app.UseRouting();
 
-// Thứ tự bắt buộc: Xác thực danh tính trước -> Phân bổ quyền hạn sau
-app.UseAuthentication();
-app.UseAuthorization();
-
-// Enable session middleware
+// ĐÃ SỬA TẠI ĐÂY: Chuyển UseSession lên TRƯỚC Authentication/Authorization để xử lý cổng kết nối API mượt mà
 app.UseSession();
 
-// Seed roles and default admin user at startup
-using (var scope = app.Services.CreateScope())
-{
-    var services = scope.ServiceProvider;
-    try
-    {
-        var roleManager = services.GetRequiredService<RoleManager<IdentityRole>>();
-        var userManager = services.GetRequiredService<UserManager<ApplicationUser>>();
-        // Run seeder (synchronous wait is acceptable at startup)
-        LeMinhNhat_WebBanHang.Services.RoleSeeder.InitializeAsync(roleManager, userManager).GetAwaiter().GetResult();
-    }
-    catch (Exception ex)
-    {
-        var logger = services.GetService<ILogger<Program>>();
-        logger?.LogError(ex, "Error while seeding roles and admin user.");
-    }
-}
+// Thứ tự bảo mật bắt buộc của hệ thống
+app.UseAuthentication();
+app.UseAuthorization();
 
 // 4. Định tuyến ưu tiên Area thiết lập trước, Default Route thiết lập sau
 app.MapControllerRoute(
@@ -92,5 +138,6 @@ app.MapControllerRoute(
     pattern: "{controller=Home}/{action=Index}/{id?}");
 
 app.MapRazorPages();
+app.MapControllers();
 
 app.Run();

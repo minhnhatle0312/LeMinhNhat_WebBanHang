@@ -1,4 +1,3 @@
-@model IEnumerable<LeMinhNhat_WebBanHang.Models.Product>
 
 @{
     ViewData["Title"] = "Thế Giới Công Nghệ & Điện Máy Chính Hãng";
@@ -164,18 +163,25 @@
                 <div class="bg-white p-3 rounded-4 shadow-sm mb-3 d-flex flex-wrap justify-content-between align-items-center gap-3">
                     <div class="d-flex align-items-center gap-2 flex-grow-1" style="min-width: 280px;">
                         <div class="position-relative w-100">
-                            <input type="text" id="dmxSearchInput" onkeyup="applyFilters()" class="form-control border ps-4 py-2.5 rounded-3 font-13 bg-light-focus" placeholder="Tìm sản phẩm theo tên..." />
+                            <input type="text" id="dmxSearchInput" oninput="applyFilters()" class="form-control border ps-4 py-2.5 rounded-3 font-13 bg-light-focus" placeholder="Tìm sản phẩm theo tên..." />
                             <i class="bi bi-search position-absolute top-50 start-0 translate-middle-y ms-3 text-muted"></i>
                         </div>
                     </div>
 
-                    <div class="d-flex align-items-center gap-2">
+                    <div class="d-flex align-items-center gap-3">
+                        <span class="text-muted small font-12" id="product-count-info" style="display: none;">
+                            <i class="bi bi-box-seam me-1"></i><span id="count-num">...</span> sản phẩm
+                        </span>
+                        <span class="text-muted small font-12" id="page-info" style="display: none;">
+                            Trang <strong id="page-current">1</strong>/<strong id="page-total">1</strong>
+                        </span>
                         <span class="text-muted small font-12"><i class="bi bi-sort-down-alt me-1"></i>Sắp xếp:</span>
                         <select id="sortFilter" class="form-select border rounded-3 font-13 bg-light-focus py-2" style="width: 200px;" onchange="applyFilters()">
                             <option value="default">Theo mặc định kho</option>
                             <option value="priceAsc">Giá tăng dần</option>
                             <option value="priceDesc">Giá giảm dần</option>
-                            <option value="nameAsc">Tên sản phẩm A -> Z</option>
+                            <option value="nameAsc">Tên sản phẩm A → Z</option>
+                            <option value="newest">Mới nhất</option>
                         </select>
                     </div>
                 </div>
@@ -194,96 +200,21 @@
                     <span class="badge bg-white text-danger fw-bold rounded-pill px-3 font-11 shadow-sm">BẢO HÀNH CHÍNH HÃNG</span>
                 </div>
 
-                <div class="row g-2 bg-white p-3 rounded-bottom-4 shadow-sm border-x border-bottom mb-4" id="product-grid">
-                    @if (Model != null && Model.Any())
-                    {
-                        foreach (var item in Model)
-                        {
-                            <div class="col-6 col-sm-4 col-md-4 col-xl-3 product-item-card animate__animated animate__fadeIn"
-                                 data-category="@item.CategoryId"
-                                 data-price="@item.Price"
-                                 data-name="@item.Name.ToLower()">
-
-                                <div class="card h-100 p-2 position-relative dmx-premium-card transition-card bg-white border-smooth">
-
-                                    <div class="position-absolute top-0 start-0 mt-2 ms-2 z-3 d-flex flex-column gap-1">
-                                        <span class="badge bg-warning text-dark font-9 fw-bold px-1.5 py-1 rounded-1 shadow-sm">Trả góp 0%</span>
-                                        @if (item.Price > 1200)
-                                        {
-                                            <span class="badge bg-danger text-white font-9 fw-bold px-1.5 py-1 rounded-1 shadow-sm animate__animated animate__pulse animate__infinite">BEST DEAL</span>
-                                        }
-                                    </div>
-
-                                    <div class="product-img-frame d-flex align-items-center justify-content-center p-2 mb-2 bg-white position-relative rounded-3" style="height: 170px; overflow: hidden;">
-                                        @if (!string.IsNullOrEmpty(item.ImageUrl))
-                                        {
-                                            <img src="@item.ImageUrl" alt="@item.Name" class="img-fluid transition-img object-contain-center" />
-                                        }
-                                        else
-                                        {
-                                            <div class="text-center text-muted">
-                                                <i class="bi bi-box-seam display-6 d-block mb-1 opacity-25"></i>
-                                                <span class="font-10">No Image</span>
-                                            </div>
-                                        }
-                                    </div>
-
-                                    <div class="card-body p-1 d-flex flex-column justify-content-between flex-grow-1">
-                                        <div>
-                                            <h6 class="product-title-text font-13 fw-bold text-dark mb-1 text-clamp-2">@item.Name</h6>
-
-                                            <div class="mb-2">
-                                                <span class="text-danger fw-extrabold font-15">@item.Price.ToString("N2") <small>$</small></span>
-                                                <span class="text-muted text-decoration-line-through font-11 ms-1">@((item.Price * 1.25m).ToString("N0")) $</span>
-                                            </div>
-
-                                            <div class="p-2 rounded-2 mb-2 bg-gift font-10 text-dark border-dashed-orange">
-                                                <i class="bi bi-gift-fill text-danger me-1 animate__animated animate__swing animate__infinite animate__slower d-inline-block"></i> Quà tặng: Combo Bảo Hành Vàng
-                                            </div>
-                                        </div>
-
-                                        <div>
-                                            <div class="mb-2">
-                                                <div class="progress rounded-pill position-relative shadow-inner" style="height: 14px; background-color: #fce8e6;">
-                                                    <div class="progress-bar progress-bar-striped progress-bar-animated rounded-pill bg-gradient-orange" role="progressbar" style="width: 72%;"></div>
-                                                    <span class="position-absolute w-100 text-center font-9 text-white fw-bold style-lh-14">Đã bán 72%</span>
-                                                </div>
-                                            </div>
-
-                                            <div class="pt-2 border-top d-flex justify-content-between align-items-center gap-1">
-                                                <a asp-action="Display" asp-route-id="@item.Id" class="btn btn-outline-secondary flex-grow-1 font-11 py-1.5 rounded-2 text-center fw-semibold transition-all">
-                                                    Chi tiết
-                                                </a>
-                                                <button onclick="addToCart(@item.Id)" class="btn btn-primary flex-grow-1 font-11 py-1.5 rounded-2 text-center fw-bold transition-all">
-                                                    Thêm giỏ
-                                                </button>
-                                                @if (User.IsInRole("Admin"))
-                                                {
-                                                    <div class="d-flex gap-1">
-                                                        <a asp-area="Admin" asp-controller="ProductManager" asp-action="Update" asp-route-id="@item.Id" class="btn btn-card-mini btn-outline-info" title="Sửa bản ghi">
-                                                            <i class="bi bi-pencil-fill"></i>
-                                                        </a>
-                                                        <a asp-area="Admin" asp-controller="ProductManager" asp-action="Delete" asp-route-id="@item.Id" class="btn btn-card-mini btn-outline-danger" title="Xóa">
-                                                            <i class="bi bi-trash3-fill"></i>
-                                                        </a>
-                                                    </div>
-                                                }
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                </div>
+                <div class="row g-2 bg-white p-3 rounded-bottom-4 shadow-sm border-x border-bottom mb-3" id="product-grid">
+                    <!-- Skeleton loaders mặc định -->
+                    @for (int i = 0; i < 8; i++) {
+                        <div class="col-6 col-sm-4 col-md-4 col-xl-3 skeleton-card-wrap">
+                            <div class="card h-100 p-2 border-smooth bg-white">
+                                <div class="product-img-frame rounded-3 mb-2" style="height:170px;background:#f1f5f9;animation:shimmerDmx 1.5s infinite;"></div>
+                                <div style="height:14px;background:#f1f5f9;border-radius:6px;margin-bottom:8px;animation:shimmerDmx 1.5s infinite;"></div>
+                                <div style="height:14px;width:60%;background:#f1f5f9;border-radius:6px;animation:shimmerDmx 1.5s infinite;"></div>
                             </div>
-                        }
-                    }
-                    else
-                    {
-                        <div class="col-12 text-center py-5 text-muted">
-                            <i class="bi bi-folder-x display-3 text-muted opacity-30 d-block mb-2"></i>
-                            <span class="font-13 fw-medium">Không tìm thấy sản phẩm nào phù hợp với bộ lọc hiện hành.</span>
                         </div>
                     }
                 </div>
+
+                <!-- Pagination -->
+                <div class="d-flex justify-content-center gap-2 mt-2 pb-3" id="pagination-area"></div>
 
             </div>
         </div>
@@ -608,75 +539,287 @@
     .fw-extrabold {
         font-weight: 800;
     }
+
+    /* API Pagination and Shimmer */
+    .page-btn {
+        min-width: 36px;
+        padding: 6px 10px;
+        border-radius: 8px;
+        font-size: 13px;
+        font-weight: 600;
+        border: 1px solid #e2e8f0;
+        background: #fff;
+        color: #475569;
+        cursor: pointer;
+        transition: all 0.2s;
+    }
+    .page-btn:hover:not(:disabled) {
+        border-color: #00aef0;
+        color: #0072bc;
+        background: #f0f9ff;
+    }
+    .page-btn.active {
+        background: linear-gradient(90deg, #0072bc, #00aef0);
+        color: #fff;
+        border-color: #0072bc;
+        box-shadow: 0 4px 12px rgba(0, 114, 188, 0.25);
+    }
+    .page-btn:disabled {
+        opacity: 0.4;
+        cursor: default;
+    }
+
+    @@keyframes shimmerDmx {
+        0% { background-position: 200% 0; }
+        100% { background-position: -200% 0; }
+    }
+    .skeleton-card-wrap .card {
+        animation: pulse 1.5s ease-in-out infinite;
+    }
 </style>
 
 @section Scripts {
     <script>
-        let selectedCategory = 'all';
+        // State management for API product catalog
+        let currentPage = 1;
+        let currentCategoryId = 0;
+        let searchTimeout = null;
+        const PAGE_SIZE = 12;
 
         // 1. Hàm lọc danh mục từ thanh điều hướng dọc
         function filterCategory(catId) {
-            selectedCategory = catId;
+            currentCategoryId = catId === 'all' ? 0 : parseInt(catId);
+            currentPage = 1;
 
             // Thay đổi Class active cho mục được nhấn hiển thị
             document.querySelectorAll('.v-nav-item').forEach(btn => {
                 btn.classList.remove('active-v-cat');
             });
-            event.currentTarget.classList.add('active-v-cat');
+            
+            // Get click element properly even if triggered inside button children
+            const btnEl = event.currentTarget || event.target.closest('.v-nav-item');
+            if (btnEl) {
+                btnEl.classList.add('active-v-cat');
+            }
 
-            applyFilters();
+            loadProducts();
         }
 
-        // 2. Bộ lọc xử lý đa điều kiện tổng hợp
+        // 2. Bộ lọc xử lý đa điều kiện tổng hợp - Tích hợp API
         function applyFilters() {
-            const searchQuery = document.getElementById('dmxSearchInput').value.toLowerCase().trim();
+            clearTimeout(searchTimeout);
+            searchTimeout = setTimeout(() => {
+                currentPage = 1;
+                loadProducts();
+            }, 400);
+        }
+
+        // 3. Tải danh sách sản phẩm động từ API
+        async function loadProducts() {
+            const searchQuery = document.getElementById('dmxSearchInput').value.trim();
             const priceRange = document.getElementById('priceFilter').value;
             const sortType = document.getElementById('sortFilter').value;
-            const products = document.querySelectorAll('.product-item-card');
 
-            let filteredArray = [];
+            let url = `/api/products?page=${currentPage}&pageSize=${PAGE_SIZE}&sortBy=${sortType}`;
+            if (searchQuery) url += `&search=${encodeURIComponent(searchQuery)}`;
+            if (currentCategoryId > 0) url += `&categoryId=${currentCategoryId}`;
+            
+            if (priceRange === 'under500') {
+                url += `&maxPrice=500`;
+            } else if (priceRange === '500to1500') {
+                url += `&minPrice=500&maxPrice=1500`;
+            } else if (priceRange === 'over1500') {
+                url += `&minPrice=1500`;
+            }
 
-            products.forEach(card => {
-                const category = card.getAttribute('data-category');
-                const price = parseFloat(card.getAttribute('data-price'));
-                const name = card.getAttribute('data-name');
+            renderSkeletons();
 
-                const matchCategory = (selectedCategory === 'all' || category === selectedCategory);
-                const matchSearch = (name.includes(searchQuery));
+            try {
+                const response = await fetch(url);
+                if (!response.ok) throw new Error('API request failed');
+                const result = await response.json();
 
-                let matchPrice = true;
-                if (priceRange === 'under500') matchPrice = (price < 500);
-                else if (priceRange === '500to1500') matchPrice = (price >= 500 && price <= 1500);
-                else if (priceRange === 'over1500') matchPrice = (price > 1500);
+                renderProducts(result.data, result.pagination);
+                renderPagination(result.pagination);
 
-                if (matchCategory && matchSearch && matchPrice) {
-                    card.style.display = "block";
-                    filteredArray.push(card);
-                } else {
-                    card.style.display = "none";
+                // Update counts & info
+                const countInfo = document.getElementById('product-count-info');
+                const pageInfo = document.getElementById('page-info');
+                if (countInfo && pageInfo) {
+                    countInfo.style.display = 'inline-block';
+                    pageInfo.style.display = 'inline-block';
+                    document.getElementById('count-num').textContent = result.pagination.totalItems;
+                    document.getElementById('page-current').textContent = result.pagination.currentPage;
+                    document.getElementById('page-total').textContent = result.pagination.totalPages || 1;
                 }
-            });
 
-            // Tiến hành sắp xếp danh sách theo tiêu chí được lựa chọn
-            const grid = document.getElementById('product-grid');
-            if (sortType !== 'default' && filteredArray.length > 0) {
-                let sortedList = Array.from(filteredArray).sort((a, b) => {
-                    let pA = parseFloat(a.getAttribute('data-price'));
-                    let pB = parseFloat(b.getAttribute('data-price'));
-                    let nA = a.getAttribute('data-name');
-                    let nB = b.getAttribute('data-name');
-
-                    if (sortType === 'priceAsc') return pA - pB;
-                    if (sortType === 'priceDesc') return pB - pA;
-                    if (sortType === 'nameAsc') return nA.localeCompare(nB);
-                    return 0;
-                });
-
-                sortedList.forEach(node => grid.appendChild(node));
+            } catch (error) {
+                console.error('Error fetching products:', error);
+                document.getElementById('product-grid').innerHTML = `
+                    <div class="col-12 text-center py-5 text-muted">
+                        <i class="bi bi-wifi-off display-3 text-muted opacity-30 d-block mb-2"></i>
+                        <span class="font-13 fw-medium">Không thể kết nối đến máy chủ dữ liệu. Vui lòng thử lại sau.</span>
+                    </div>`;
             }
         }
 
-        // 3. Hệ thống đồng hồ đếm ngược Flash Sale
+        // 4. Render sản phẩm động vào DOM
+        function renderProducts(products, pagination) {
+            const grid = document.getElementById('product-grid');
+            if (!products || products.length === 0) {
+                grid.innerHTML = `
+                    <div class="col-12 text-center py-5 text-muted">
+                        <i class="bi bi-folder-x display-3 text-muted opacity-30 d-block mb-2"></i>
+                        <span class="font-13 fw-medium">Không tìm thấy sản phẩm nào phù hợp với bộ lọc hiện hành.</span>
+                    </div>`;
+                return;
+            }
+
+            const isAdmin = @(User.IsInRole("Admin") ? "true" : "false");
+
+            grid.innerHTML = products.map(item => {
+                const hasBestDeal = item.price > 1200;
+                
+                // Format price with commas
+                const formattedPrice = formatNumber(item.price);
+                const formattedOriginalPrice = formatNumber(item.originalPrice || (item.price * 1.25));
+
+                const imgHtml = item.imageUrl 
+                    ? `<img src="${item.imageUrl}" alt="${escHtml(item.name)}" class="img-fluid transition-img object-contain-center" />`
+                    : `<div class="text-center text-muted">
+                            <i class="bi bi-box-seam display-6 d-block mb-1 opacity-25"></i>
+                            <span class="font-10">No Image</span>
+                       </div>`;
+
+                const adminActionsHtml = isAdmin ? `
+                    <div class="d-flex gap-1">
+                        <a href="/Admin/ProductManager/Update/${item.id}" class="btn btn-card-mini btn-outline-info" title="Sửa bản ghi">
+                            <i class="bi bi-pencil-fill"></i>
+                        </a>
+                        <a href="/Admin/ProductManager/Delete/${item.id}" class="btn btn-card-mini btn-outline-danger" title="Xóa">
+                            <i class="bi bi-trash3-fill"></i>
+                        </a>
+                    </div>
+                ` : '';
+
+                return `
+                    <div class="col-6 col-sm-4 col-md-4 col-xl-3 product-item-card animate__animated animate__fadeIn">
+                        <div class="card h-100 p-2 position-relative dmx-premium-card transition-card bg-white border-smooth">
+                            <div class="position-absolute top-0 start-0 mt-2 ms-2 z-3 d-flex flex-column gap-1">
+                                <span class="badge bg-warning text-dark font-9 fw-bold px-1.5 py-1 rounded-1 shadow-sm">Trả góp 0%</span>
+                                ${hasBestDeal ? '<span class="badge bg-danger text-white font-9 fw-bold px-1.5 py-1 rounded-1 shadow-sm animate__animated animate__pulse animate__infinite">BEST DEAL</span>' : ''}
+                            </div>
+
+                            <div class="product-img-frame d-flex align-items-center justify-content-center p-2 mb-2 bg-white position-relative rounded-3" style="height: 170px; overflow: hidden;">
+                                ${imgHtml}
+                            </div>
+
+                            <div class="card-body p-1 d-flex flex-column justify-content-between flex-grow-1">
+                                <div>
+                                    <h6 class="product-title-text font-13 fw-bold text-dark mb-1 text-clamp-2">${escHtml(item.name)}</h6>
+
+                                    <div class="mb-2">
+                                        <span class="text-danger fw-extrabold font-15">${formattedPrice} <small>$</small></span>
+                                        <span class="text-muted text-decoration-line-through font-11 ms-1">${formattedOriginalPrice} $</span>
+                                    </div>
+
+                                    <div class="p-2 rounded-2 mb-2 bg-gift font-10 text-dark border-dashed-orange">
+                                        <i class="bi bi-gift-fill text-danger me-1 animate__animated animate__swing animate__infinite animate__slower d-inline-block"></i> Quà tặng: Combo Bảo Hành Vàng
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <div class="mb-2">
+                                        <div class="progress rounded-pill position-relative shadow-inner" style="height: 14px; background-color: #fce8e6;">
+                                            <div class="progress-bar progress-bar-striped progress-bar-animated rounded-pill bg-gradient-orange" role="progressbar" style="width: 72%;"></div>
+                                            <span class="position-absolute w-100 text-center font-9 text-white fw-bold style-lh-14">Đã bán 72%</span>
+                                        </div>
+                                    </div>
+
+                                    <div class="pt-2 border-top d-flex justify-content-between align-items-center gap-1">
+                                        <a href="/Product/Display/${item.id}" class="btn btn-outline-secondary flex-grow-1 font-11 py-1.5 rounded-2 text-center fw-semibold transition-all">
+                                            Chi tiết
+                                        </a>
+                                        <button onclick="addToCart(${item.id})" class="btn btn-primary flex-grow-1 font-11 py-1.5 rounded-2 text-center fw-bold transition-all">
+                                            Thêm giỏ
+                                        </button>
+                                        ${adminActionsHtml}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // 5. Hiển thị Skeleton Loader
+        function renderSkeletons() {
+            const grid = document.getElementById('product-grid');
+            grid.innerHTML = Array(8).fill(0).map(() => `
+                <div class="col-6 col-sm-4 col-md-4 col-xl-3 skeleton-card-wrap">
+                    <div class="card h-100 p-2 border-smooth bg-white">
+                        <div class="product-img-frame rounded-3 mb-2" style="height:170px;background:linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%);background-size:200%;animation:shimmerDmx 1.5s infinite;"></div>
+                        <div style="height:14px;width:90%;background:linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%);background-size:200%;border-radius:6px;margin-bottom:8px;animation:shimmerDmx 1.5s infinite;"></div>
+                        <div style="height:14px;width:60%;background:linear-gradient(90deg,#f1f5f9 25%,#e2e8f0 50%,#f1f5f9 75%);background-size:200%;border-radius:6px;animation:shimmerDmx 1.5s infinite;"></div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        // 6. Hiển thị thanh phân trang
+        function renderPagination(pag) {
+            const area = document.getElementById('pagination-area');
+            if (!pag || pag.totalPages <= 1) { 
+                area.innerHTML = ''; 
+                return; 
+            }
+
+            let html = '';
+            // Prev button
+            html += `<button class="page-btn" ${!pag.hasPrevious ? 'disabled' : ''} onclick="goPage(${pag.currentPage - 1})">
+                <i class="bi bi-chevron-left"></i>
+            </button>`;
+
+            // Page buttons
+            const startPage = Math.max(1, pag.currentPage - 2);
+            const endPage = Math.min(pag.totalPages, pag.currentPage + 2);
+            for (let i = startPage; i <= endPage; i++) {
+                const isActive = i === pag.currentPage;
+                html += `<button class="page-btn ${isActive ? 'active' : ''}" onclick="goPage(${i})">${i}</button>`;
+            }
+
+            // Next button
+            html += `<button class="page-btn" ${!pag.hasNext ? 'disabled' : ''} onclick="goPage(${pag.currentPage + 1})">
+                <i class="bi bi-chevron-right"></i>
+            </button>`;
+
+            area.innerHTML = html;
+        }
+
+        // 7. Chuyển trang
+        function goPage(page) {
+            currentPage = page;
+            loadProducts();
+            document.getElementById('product-showcase').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        // Helpers
+        function formatNumber(num) {
+            return parseFloat(num || 0).toLocaleString('vi-VN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        }
+
+        // Escape HTML to prevent XSS
+        function escHtml(str) {
+            return String(str)
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        // 8. Hệ thống đồng hồ đếm ngược Flash Sale
         function runFlashSaleTimer() {
             let initialSeconds = 3 * 3600 + 12 * 60 + 44; // Thời gian chạy mặc định ban đầu
 
@@ -698,6 +841,7 @@
 
         document.addEventListener("DOMContentLoaded", () => {
             runFlashSaleTimer();
+            loadProducts(); // Load initial products from API
         });
     </script>
 }
